@@ -3,7 +3,7 @@
 Sfondi animati, schermate, overlay e transizioni per dirette con **OBS Studio**.
 Sono tutti file **HTML autonomi**: non servono plugin né programmi esterni.
 
-Tutti gli elementi usano la stessa palette (blu `#1d4ed8`, ciano `#06b6d4`, verde `#10b981` su blu notte `#040914`), così stanno bene insieme nella stessa diretta.
+Tutti gli elementi prendono i colori da **un'unica palette** ([`palette.js`](palette.js)), così stanno bene insieme nella stessa diretta. La palette si cambia in un attimo, per tutti i file o per uno solo: vedi [Colori e temi](#-colori-e-temi).
 
 ## Come si usano
 
@@ -21,12 +21,67 @@ file:///Users/TUO_UTENTE/Desktop/Background/Schermate/inizio-diretta.html?titolo
 (`%20` = spazio). In alternativa apri il file con un editor di testo e modifica il blocco **PERSONALIZZA QUI**.
 
 ```
+📄 palette.js     colori condivisi da tutti i file (+ 10 temi pronti)
 📁 Sfondi/        sfondi animati a schermo intero
 📁 Schermate/     scene pronte: inizio, pausa, fine
 📁 Overlay/       elementi trasparenti da sovrapporre (orologi, timer, badge, lower third…)
 📁 Transizioni/   animazioni di passaggio tra scene
+📁 Strumenti/     editor visuale della palette
 📁 anteprime/     immagini usate in questo README
 ```
+
+> Lascia `palette.js` nella cartella principale e non spostare i file fuori dalle loro cartelle: ogni file lo carica da lì.
+
+---
+
+## 🎨 Colori e temi
+
+La palette ha quattro colori. Ogni elemento li usa sempre con lo stesso ruolo, quindi qualsiasi combinazione resta coerente:
+
+| Ruolo | Nome | Predefinito |
+|---|---|---|
+| Principale | `c1` | `#1d4ed8` blu |
+| Secondario | `c2` | `#10b981` verde |
+| Accento | `c3` | `#06b6d4` ciano |
+| Sfondo | `sfondo` | `#040914` blu notte |
+
+Le varianti più chiare e più scure (bagliori, gradienti, testi) vengono calcolate in automatico.
+
+**Temi pronti:** `blu-verde` · `viola-rosa` · `tramonto` · `cyberpunk` · `foresta` · `oro` · `fuoco` · `oceano` · `ghiaccio` · `monocromo`
+
+<img src="anteprime/temi-esempio.png" width="800">
+
+### Il modo più semplice: l'editor
+
+Apri **[Strumenti/editor-palette.html](Strumenti/editor-palette.html)** nel browser (doppio clic). Scegli un elemento, prova i temi o i tuoi colori e vedi subito il risultato. Poi copia il codice pronto per uno dei tre livelli qui sotto.
+
+<img src="anteprime/editor-palette.png" width="800">
+
+### Tre livelli, dal più ampio al più specifico
+
+**1. Tutti i file**: apri `palette.js` e modifica il blocco *PERSONALIZZA QUI*:
+```js
+const TEMA_PREDEFINITO = "tramonto";          // un tema pronto…
+const COLORI_PERSONALIZZATI = {
+  // c1: "#ff3366",                           // …e/o i tuoi colori
+};
+```
+
+**2. Un solo file**: in cima a ogni `.html` c'è questa riga, compilala solo per quel file:
+```html
+<script>window.PALETTE_FILE = { tema: "cyberpunk", c1: "", c2: "", c3: "", sfondo: "" };</script>
+```
+
+**3. Una sola Fonte Browser** (senza toccare i file): aggiungi i parametri all'URL.
+```
+…/Sfondi/onde-luminose.html?tema=oceano
+…/Sfondi/onde-luminose.html?c1=ff3366&c2=ffcc00&c3=00ccff&sfondo=0a0a0a
+```
+Così puoi usare lo stesso file in due scene con colori diversi.
+
+Se più livelli sono impostati insieme, vince il più specifico: **URL → file → palette.js**.
+
+> Restano fissi di proposito solo il rosso del badge "IN DIRETTA" e i colori ufficiali dei social. Le lower third partono dal colore principale della palette, ma dal pannello puoi sempre scegliere un colore per ogni ospite.
 
 ---
 
@@ -42,7 +97,7 @@ Formato 1920×1080. Si mettono in fondo alla scena, sotto webcam e contenuti.
 | <img src="anteprime/aurora-dinamica.png" width="320"> | [aurora-dinamica](Sfondi/aurora-dinamica.html) | Aurora più rapida e contrastata, per contenuti energici. |
 | <img src="anteprime/griglia-prospettiva.png" width="320"> | [griglia-prospettiva](Sfondi/griglia-prospettiva.html) | Pavimento a griglia in stile retro-futuristico che avanza verso l'orizzonte. `?velocita=6` |
 | <img src="anteprime/costellazione.png" width="320"> | [costellazione](Sfondi/costellazione.html) | Particelle che si muovono e si collegano con linee sottili. `?numero=110&distanza=170` |
-| <img src="anteprime/onde-luminose.png" width="320"> | [onde-luminose](Sfondi/onde-luminose.html) | Onde luminose sovrapposte che ondeggiano. `?colori=1d4ed8,06b6d4,10b981&altezza=0.62` |
+| <img src="anteprime/onde-luminose.png" width="320"> | [onde-luminose](Sfondi/onde-luminose.html) | Onde luminose sovrapposte che ondeggiano. `?altezza=0.62&velocita=1` |
 | <img src="anteprime/campo-stellare.png" width="320"> | [campo-stellare](Sfondi/campo-stellare.html) | Viaggio tra le stelle con nebulose colorate. `?velocita=0` per stelle ferme che brillano |
 | <img src="anteprime/bokeh-luci.png" width="320"> | [bokeh-luci](Sfondi/bokeh-luci.html) | Luci sfocate che salgono piano, effetto obiettivo fotografico. `?numero=45` |
 | <img src="anteprime/esagoni-tech.png" width="320"> | [esagoni-tech](Sfondi/esagoni-tech.html) | Griglia di esagoni attraversata da un'onda di luce. Stile tech/gaming. `?lato=46` |

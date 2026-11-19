@@ -2,6 +2,11 @@
 <html lang="it">
 <head>
 <meta charset="UTF-8">
+<!-- PALETTE: lascia vuoto per usare quella comune (palette.js), oppure scegli un tema
+     (blu-verde, viola-rosa, tramonto, cyberpunk, foresta, oro, fuoco, oceano, ghiaccio, monocromo)
+     o colori esadecimali validi solo per questo file. -->
+<script>window.PALETTE_FILE = { tema: "", c1: "", c2: "", c3: "", sfondo: "" };</script>
+<script src="../palette.js"></script>
 <title>Barra obiettivo</title>
 <!--
   Barra di avanzamento verso un obiettivo (iscritti, donazioni, like...).
@@ -18,14 +23,14 @@
     font-family: "SF Pro Display", "Helvetica Neue", "Segoe UI", Arial, sans-serif; color: #fff; }
   body { display: flex; align-items: center; justify-content: center; height: 100vh; }
   .box { width: calc(100vw - 40px); padding: 18px 26px 22px; border-radius: 18px; box-sizing: border-box;
-    background: rgba(4,9,20,.85); border: 1px solid rgba(255,255,255,.12); box-shadow: 0 10px 40px rgba(0,0,0,.35); }
+    background: rgba(var(--sfondo-rgb),.85); border: 1px solid rgba(255,255,255,.12); box-shadow: 0 10px 40px rgba(0,0,0,.35); }
   .testa { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 12px; }
   .titolo { font-size: 26px; font-weight: 700; }
   .numeri { font-size: 24px; font-variant-numeric: tabular-nums; color: rgba(255,255,255,.75); }
   .numeri b { color: #fff; font-size: 30px; }
   .pista { position: relative; height: 26px; border-radius: 13px; background: rgba(255,255,255,.1); overflow: hidden; }
   .riemp { position: absolute; inset: 0 auto 0 0; width: 0; border-radius: 13px;
-    background: linear-gradient(90deg, #1d4ed8, #06b6d4, #10b981); box-shadow: 0 0 20px rgba(16,185,129,.6);
+    background: linear-gradient(90deg, var(--c1), var(--c3), var(--c2)); box-shadow: 0 0 20px rgba(var(--c2-rgb),.6);
     transition: width 2.5s cubic-bezier(.2,.8,.2,1); overflow: hidden; }
   .riemp::after { content: ""; position: absolute; inset: 0;
     background: linear-gradient(110deg, transparent 30%, rgba(255,255,255,.35) 50%, transparent 70%); background-size: 200% 100%;

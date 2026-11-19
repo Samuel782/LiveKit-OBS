@@ -2,6 +2,11 @@
 <html lang="it">
 <head>
 <meta charset="UTF-8">
+<!-- PALETTE: lascia vuoto per usare quella comune (palette.js), oppure scegli un tema
+     (blu-verde, viola-rosa, tramonto, cyberpunk, foresta, oro, fuoco, oceano, ghiaccio, monocromo)
+     o colori esadecimali validi solo per questo file. -->
+<script>window.PALETTE_FILE = { tema: "", c1: "", c2: "", c3: "", sfondo: "" };</script>
+<script src="../palette.js"></script>
 <title>Testo scorrevole</title>
 <!--
   Barra news con testo che scorre (ticker). Consigliato: Fonte Browser 1920x80, in fondo allo schermo.
@@ -14,16 +19,16 @@
   html, body { margin: 0; background: transparent; overflow: hidden;
     font-family: "SF Pro Display", "Helvetica Neue", "Segoe UI", Arial, sans-serif; }
   .barra { position: fixed; left: 0; right: 0; bottom: 0; height: 100vh; display: flex; align-items: stretch;
-    background: rgba(4,9,20,.88); border-top: 2px solid; border-image: linear-gradient(90deg, #1d4ed8, #06b6d4, #10b981) 1;
+    background: rgba(var(--sfondo-rgb),.88); border-top: 2px solid; border-image: linear-gradient(90deg, var(--c1), var(--c3), var(--c2)) 1;
     animation: sale .7s cubic-bezier(.2,.8,.2,1) both; }
   .etichetta { position: relative; z-index: 2; display: flex; align-items: center; padding: 0 1.4em 0 1.2em;
-    background: linear-gradient(135deg, #1d4ed8, #10b981); color: #fff; font-weight: 800; letter-spacing: .15em; font-size: 42vh;
+    background: linear-gradient(135deg, var(--c1), var(--c2)); color: #fff; font-weight: 800; letter-spacing: .15em; font-size: 42vh;
     clip-path: polygon(0 0, 100% 0, calc(100% - .6em) 100%, 0 100%); }
   .scorre { position: relative; flex: 1; overflow: hidden; display: flex; align-items: center;
     -webkit-mask-image: linear-gradient(90deg, transparent, #000 4%, #000 96%, transparent); mask-image: linear-gradient(90deg, transparent, #000 4%, #000 96%, transparent); }
   .nastro { display: flex; white-space: nowrap; will-change: transform; }
   .nastro span { color: #fff; font-size: 40vh; font-weight: 500; padding-right: 1.2em; }
-  .nastro span::after { content: "◆"; color: #10b981; font-size: .5em; margin-left: 1.2em; vertical-align: middle; }
+  .nastro span::after { content: "◆"; color: var(--c2); font-size: .5em; margin-left: 1.2em; vertical-align: middle; }
   @keyframes sale { from { transform: translateY(100%); } }
 </style>
 </head>

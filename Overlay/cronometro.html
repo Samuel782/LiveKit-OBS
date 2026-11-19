@@ -2,6 +2,11 @@
 <html lang="it">
 <head>
 <meta charset="UTF-8">
+<!-- PALETTE: lascia vuoto per usare quella comune (palette.js), oppure scegli un tema
+     (blu-verde, viola-rosa, tramonto, cyberpunk, foresta, oro, fuoco, oceano, ghiaccio, monocromo)
+     o colori esadecimali validi solo per questo file. -->
+<script>window.PALETTE_FILE = { tema: "", c1: "", c2: "", c3: "", sfondo: "" };</script>
+<script src="../palette.js"></script>
 <title>Cronometro</title>
 <!--
   Cronometro con decimi, sfondo trasparente. Consigliato: Fonte Browser 700x200.
@@ -14,13 +19,13 @@
     font-family: "SF Pro Display", "Helvetica Neue", "Segoe UI", Arial, sans-serif; color: #fff; }
   body { display: flex; align-items: center; justify-content: center; height: 100vh; user-select: none; }
   .box { display: flex; align-items: center; gap: 22px; padding: 16px 34px; border-radius: 18px;
-    background: rgba(4,9,20,.8); border: 1px solid rgba(255,255,255,.12); box-shadow: 0 10px 40px rgba(0,0,0,.35); }
+    background: rgba(var(--sfondo-rgb),.8); border: 1px solid rgba(255,255,255,.12); box-shadow: 0 10px 40px rgba(0,0,0,.35); }
   .nobox .box { background: none; border: 0; box-shadow: none; }
   .stato { width: 18px; height: 18px; border-radius: 50%; background: #64748b; transition: background .3s; }
-  .va .stato { background: #10b981; box-shadow: 0 0 14px #10b981; }
+  .va .stato { background: var(--c2); box-shadow: 0 0 14px var(--c2); }
   .tempo { font-size: 96px; font-weight: 700; font-variant-numeric: tabular-nums; letter-spacing: .01em; line-height: 1;
     text-shadow: 0 3px 12px rgba(0,0,0,.4); }
-  .dec { font-size: .5em; color: #6ee7b7; }
+  .dec { font-size: .5em; color: var(--c2-chiaro); }
   .giri { position: fixed; right: 12px; top: 8px; font-size: 18px; color: rgba(255,255,255,.7); text-align: right; font-variant-numeric: tabular-nums; }
 </style>
 </head>

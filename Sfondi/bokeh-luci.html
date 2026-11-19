@@ -2,10 +2,15 @@
 <html lang="it">
 <head>
 <meta charset="UTF-8">
+<!-- PALETTE: lascia vuoto per usare quella comune (palette.js), oppure scegli un tema
+     (blu-verde, viola-rosa, tramonto, cyberpunk, foresta, oro, fuoco, oceano, ghiaccio, monocromo)
+     o colori esadecimali validi solo per questo file. -->
+<script>window.PALETTE_FILE = { tema: "", c1: "", c2: "", c3: "", sfondo: "" };</script>
+<script src="../palette.js"></script>
 <title>Luci bokeh</title>
 <style>
   html, body { margin: 0; width: 100vw; height: 100vh; overflow: hidden;
-    background: linear-gradient(160deg, #061229 0%, #040914 55%, #03140f 100%); }
+    background: linear-gradient(160deg, var(--sfondo-chiaro) 0%, var(--sfondo) 55%, var(--sfondo-chiaro) 100%); }
   .luce {
     position: absolute; border-radius: 50%;
     mix-blend-mode: screen;
@@ -21,10 +26,10 @@
 </head>
 <body>
 <script>
-  /* ====== PERSONALIZZA QUI (o via URL: ?numero=45&colori=3b82f6,10b981,06b6d4) ====== */
+  /* ====== PERSONALIZZA QUI (o via URL: ?numero=45) ====== */
   const Q = new URLSearchParams(location.search);
   const NUMERO = +(Q.get("numero") || 45);
-  const COLORI = (Q.get("colori") || "3b82f6,10b981,06b6d4,60a5fa,34d399").split(",");
+  const COLORI = [PAL["c1-chiaro"], PAL.c2, PAL.c3, PAL.c1, PAL["c2-chiaro"]].map(c => c.slice(1));   // dalla palette
   /* ================================================================================== */
   let seed = 11; const rnd = () => ((seed = (seed * 16807) % 2147483647) / 2147483647);
   const hexRgb = (h) => [0, 2, 4].map(i => parseInt(h.substr(i, 2), 16)).join(",");

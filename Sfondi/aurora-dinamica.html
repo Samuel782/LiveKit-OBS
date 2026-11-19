@@ -2,11 +2,16 @@
 <html lang="it">
 <head>
     <meta charset="UTF-8">
+<!-- PALETTE: lascia vuoto per usare quella comune (palette.js), oppure scegli un tema
+     (blu-verde, viola-rosa, tramonto, cyberpunk, foresta, oro, fuoco, oceano, ghiaccio, monocromo)
+     o colori esadecimali validi solo per questo file. -->
+<script>window.PALETTE_FILE = { tema: "", c1: "", c2: "", c3: "", sfondo: "" };</script>
+<script src="../palette.js"></script>
     <style>
         body {
             margin: 0;
             overflow: hidden;
-            background: #020617;
+            background: var(--sfondo);
             width: 100vw;
             height: 100vh;
         }
@@ -18,18 +23,18 @@
         }
         #b1 { 
             width: 75vw; height: 75vw; 
-            background: radial-gradient(circle, rgba(37, 99, 235, 0.6) 0%, rgba(37, 99, 235, 0) 70%);
+            background: radial-gradient(circle, rgba(var(--c1-rgb), 0.6) 0%, rgba(var(--c1-rgb), 0) 70%);
             top: -10%; left: -10%; 
         }
         #b2 { 
             width: 70vw; height: 70vw; 
-            background: radial-gradient(circle, rgba(34, 197, 94, 0.45) 0%, rgba(34, 197, 94, 0) 70%);
+            background: radial-gradient(circle, rgba(var(--c2-rgb), 0.45) 0%, rgba(var(--c2-rgb), 0) 70%);
             bottom: -20%; right: -10%; 
             animation-duration: 14s;
         }
         #b3 { 
             width: 60vw; height: 60vw; 
-            background: radial-gradient(circle, rgba(14, 165, 233, 0.5) 0%, rgba(14, 165, 233, 0) 70%);
+            background: radial-gradient(circle, rgba(var(--c3-rgb), 0.5) 0%, rgba(var(--c3-rgb), 0) 70%);
             top: 30%; left: 40%; 
             animation-duration: 8s; 
         }

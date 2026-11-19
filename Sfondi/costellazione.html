@@ -2,15 +2,20 @@
 <html lang="it">
 <head>
 <meta charset="UTF-8">
+<!-- PALETTE: lascia vuoto per usare quella comune (palette.js), oppure scegli un tema
+     (blu-verde, viola-rosa, tramonto, cyberpunk, foresta, oro, fuoco, oceano, ghiaccio, monocromo)
+     o colori esadecimali validi solo per questo file. -->
+<script>window.PALETTE_FILE = { tema: "", c1: "", c2: "", c3: "", sfondo: "" };</script>
+<script src="../palette.js"></script>
 <title>Costellazione di particelle</title>
 <style>
-  html, body { margin: 0; width: 100vw; height: 100vh; overflow: hidden; background: #040914; }
+  html, body { margin: 0; width: 100vw; height: 100vh; overflow: hidden; background: var(--sfondo); }
   canvas { display: block; width: 100vw; height: 100vh; }
   .alone {
     position: fixed; inset: 0; pointer-events: none;
     background:
-      radial-gradient(circle at 15% 20%, rgba(29,78,216,.35), transparent 45%),
-      radial-gradient(circle at 85% 85%, rgba(16,185,129,.28), transparent 45%);
+      radial-gradient(circle at 15% 20%, rgba(var(--c1-rgb),.35), transparent 45%),
+      radial-gradient(circle at 85% 85%, rgba(var(--c2-rgb),.28), transparent 45%);
   }
 </style>
 </head>
@@ -18,10 +23,10 @@
 <div class="alone"></div>
 <canvas id="c"></canvas>
 <script>
-  /* ====== PERSONALIZZA QUI (o via URL: ?c1=60a5fa&c2=34d399&numero=110&distanza=170) ====== */
+  /* ====== PERSONALIZZA QUI (o via URL: ?numero=110&distanza=170) ====== */
   const Q = new URLSearchParams(location.search);
-  const C1 = "#" + (Q.get("c1") || "60a5fa");   // colore particelle A
-  const C2 = "#" + (Q.get("c2") || "34d399");   // colore particelle B
+  const C1 = PAL["c1-chiaro"];                  // colore particelle A (dalla palette)
+  const C2 = PAL["c2-chiaro"];                  // colore particelle B (dalla palette)
   const NUMERO = +(Q.get("numero") || 110);     // quante particelle
   const DISTANZA = +(Q.get("distanza") || 170); // distanza massima per le linee
   const VELOCITA = +(Q.get("velocita") || 0.25);

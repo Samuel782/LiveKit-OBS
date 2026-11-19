@@ -2,22 +2,27 @@
 <html lang="it">
 <head>
 <meta charset="UTF-8">
+<!-- PALETTE: lascia vuoto per usare quella comune (palette.js), oppure scegli un tema
+     (blu-verde, viola-rosa, tramonto, cyberpunk, foresta, oro, fuoco, oceano, ghiaccio, monocromo)
+     o colori esadecimali validi solo per questo file. -->
+<script>window.PALETTE_FILE = { tema: "", c1: "", c2: "", c3: "", sfondo: "" };</script>
+<script src="../palette.js"></script>
 <title>Esagoni tech</title>
 <style>
-  html, body { margin: 0; width: 100vw; height: 100vh; overflow: hidden; background: #040914; }
+  html, body { margin: 0; width: 100vw; height: 100vh; overflow: hidden; background: var(--sfondo); }
   canvas { display: block; width: 100vw; height: 100vh; }
   .vignetta { position: fixed; inset: 0; pointer-events: none;
-    background: radial-gradient(ellipse at center, transparent 35%, rgba(4,9,20,.9) 100%); }
+    background: radial-gradient(ellipse at center, transparent 35%, rgba(var(--sfondo-rgb),.9) 100%); }
 </style>
 </head>
 <body>
 <canvas id="c"></canvas>
 <div class="vignetta"></div>
 <script>
-  /* ====== PERSONALIZZA QUI (o via URL: ?lato=46&c1=3b82f6&c2=10b981) ====== */
+  /* ====== PERSONALIZZA QUI (o via URL: ?lato=46) ====== */
   const Q = new URLSearchParams(location.search);
   const LATO = +(Q.get("lato") || 46);              // dimensione esagono
-  const C1 = Q.get("c1") || "3b82f6", C2 = Q.get("c2") || "10b981";
+  const C1 = PAL["c1-chiaro"].slice(1), C2 = PAL.c2.slice(1);   // dalla palette
   /* ======================================================================= */
   const rgb = (h) => [0, 2, 4].map(i => parseInt(h.substr(i, 2), 16));
   const A = rgb(C1), B = rgb(C2);

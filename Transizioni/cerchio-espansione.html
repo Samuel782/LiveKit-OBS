@@ -2,6 +2,11 @@
 <html lang="it">
 <head>
 <meta charset="UTF-8">
+<!-- PALETTE: lascia vuoto per usare quella comune (palette.js), oppure scegli un tema
+     (blu-verde, viola-rosa, tramonto, cyberpunk, foresta, oro, fuoco, oceano, ghiaccio, monocromo)
+     o colori esadecimali validi solo per questo file. -->
+<script>window.PALETTE_FILE = { tema: "", c1: "", c2: "", c3: "", sfondo: "" };</script>
+<script src="../palette.js"></script>
 <title>Transizione cerchio</title>
 <!--
   Transizione: cerchi concentrici blu/ciano/verde che si espandono dal centro,
@@ -14,7 +19,7 @@
   html, body { margin: 0; width: 100vw; height: 100vh; overflow: hidden; background: transparent; }
   .cerchio { position: absolute; left: 50%; top: 50%; width: 10px; height: 10px; margin: -5px 0 0 -5px;
     border-radius: 50%; transform: scale(0); }
-  .c1 { background: #10b981; } .c2 { background: #06b6d4; } .c3 { background: #1d4ed8; }
+  .c1 { background: var(--c2); } .c2 { background: var(--c3); } .c3 { background: var(--c1); }
   .logo { position: absolute; left: 50%; top: 50%; width: 14vh; height: 14vh; margin: -7vh 0 0 -7vh; border-radius: 50%;
     border: .9vh solid rgba(255,255,255,.9); opacity: 0; transform: scale(.4); }
   .attivo .c1 { animation: espandi var(--durata) cubic-bezier(.7,0,.3,1) forwards; }

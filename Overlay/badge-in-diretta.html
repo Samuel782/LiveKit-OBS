@@ -2,6 +2,11 @@
 <html lang="it">
 <head>
 <meta charset="UTF-8">
+<!-- PALETTE: lascia vuoto per usare quella comune (palette.js), oppure scegli un tema
+     (blu-verde, viola-rosa, tramonto, cyberpunk, foresta, oro, fuoco, oceano, ghiaccio, monocromo)
+     o colori esadecimali validi solo per questo file. -->
+<script>window.PALETTE_FILE = { tema: "", c1: "", c2: "", c3: "", sfondo: "" };</script>
+<script src="../palette.js"></script>
 <title>Badge In diretta</title>
 <!--
   Badge "IN DIRETTA" con punto pulsante e durata della diretta.
@@ -18,7 +23,7 @@
     font-weight: 800; letter-spacing: .12em; }
   .punto { width: 16px; height: 16px; border-radius: 50%; background: #fff; position: relative; }
   .punto::after { content: ""; position: absolute; inset: 0; border-radius: 50%; background: #fff; animation: pulsa 1.6s ease-out infinite; }
-  .tempo { display: flex; align-items: center; padding: 14px 24px; background: rgba(4,9,20,.85); color: #fff;
+  .tempo { display: flex; align-items: center; padding: 14px 24px; background: rgba(var(--sfondo-rgb),.85); color: #fff;
     font-weight: 600; font-variant-numeric: tabular-nums; letter-spacing: .05em; }
   .tempo:empty { display: none; }
   @keyframes pulsa { from { transform: scale(1); opacity: .8; } to { transform: scale(3); opacity: 0; } }

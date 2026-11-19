@@ -2,13 +2,18 @@
 <html lang="it">
 <head>
 <meta charset="UTF-8">
+<!-- PALETTE: lascia vuoto per usare quella comune (palette.js), oppure scegli un tema
+     (blu-verde, viola-rosa, tramonto, cyberpunk, foresta, oro, fuoco, oceano, ghiaccio, monocromo)
+     o colori esadecimali validi solo per questo file. -->
+<script>window.PALETTE_FILE = { tema: "", c1: "", c2: "", c3: "", sfondo: "" };</script>
+<script src="../palette.js"></script>
 <title>Orologio OBS</title>
 <style>
   /* ====== PERSONALIZZA QUI ====== */
   :root {
     --colore-testo: #ffffff;
     --colore-data:  rgba(255,255,255,.7);
-    --sfondo: rgba(0,0,0,0);        /* es. rgba(0,0,0,.5) per un box scuro */
+    --sfondo-box: rgba(0,0,0,0);    /* es. rgba(var(--sfondo-rgb),.7) per un box scuro con il colore della palette */
     --dimensione: 120px;            /* grandezza dell'ora */
     --font: "SF Pro Display", "Helvetica Neue", "Segoe UI", Arial, sans-serif;
     --allineamento: center;         /* left | center | right */
@@ -21,7 +26,7 @@
     justify-content: var(--allineamento);
   }
   .box {
-    background: var(--sfondo); padding: .15em .4em; border-radius: .15em;
+    background: var(--sfondo-box); padding: .15em .4em; border-radius: .15em;
     font-family: var(--font); font-size: var(--dimensione);
     text-align: var(--allineamento); line-height: 1;
   }

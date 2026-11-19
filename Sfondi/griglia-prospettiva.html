@@ -2,15 +2,20 @@
 <html lang="it">
 <head>
 <meta charset="UTF-8">
+<!-- PALETTE: lascia vuoto per usare quella comune (palette.js), oppure scegli un tema
+     (blu-verde, viola-rosa, tramonto, cyberpunk, foresta, oro, fuoco, oceano, ghiaccio, monocromo)
+     o colori esadecimali validi solo per questo file. -->
+<script>window.PALETTE_FILE = { tema: "", c1: "", c2: "", c3: "", sfondo: "" };</script>
+<script src="../palette.js"></script>
 <title>Griglia in prospettiva</title>
 <style>
   /* ====== PERSONALIZZA QUI (o via URL: ?velocita=6) ====== */
   :root {
-    --linee: rgba(96, 165, 250, .55);     /* colore linee griglia */
-    --orizzonte: #10b981;                 /* colore dell'orizzonte */
-    --alone: rgba(16, 185, 129, .40);     /* bagliore dell'orizzonte */
-    --cielo: rgba(29, 78, 216, .28);      /* tinta del cielo */
-    --notte: #040914;                     /* sfondo */
+    --linee: rgba(var(--c1-chiaro-rgb), .55);     /* colore linee griglia */
+    --orizzonte: var(--c2);                 /* colore dell'orizzonte */
+    --alone: rgba(var(--c2-rgb), .40);     /* bagliore dell'orizzonte */
+    --cielo: rgba(var(--c1-rgb), .28);      /* tinta del cielo */
+    --notte: var(--sfondo);                     /* sfondo */
     --velocita: 6s;                       /* durata di un ciclo */
   }
   /* ======================================================== */
@@ -44,7 +49,7 @@
   }
   .piano::after { /* la griglia sfuma verso l'orizzonte */
     content: ""; position: absolute; inset: 0;
-    background: linear-gradient(to bottom, var(--notte) 0%, rgba(4,9,20,.6) 18%, transparent 60%);
+    background: linear-gradient(to bottom, var(--notte) 0%, rgba(var(--sfondo-rgb),.6) 18%, transparent 60%);
   }
   @keyframes avanza { to { background-position: 0 90px, 0 90px; } }
 </style>

@@ -2,6 +2,11 @@
 <html lang="it">
 <head>
 <meta charset="UTF-8">
+<!-- PALETTE: lascia vuoto per usare quella comune (palette.js), oppure scegli un tema
+     (blu-verde, viola-rosa, tramonto, cyberpunk, foresta, oro, fuoco, oceano, ghiaccio, monocromo)
+     o colori esadecimali validi solo per questo file. -->
+<script>window.PALETTE_FILE = { tema: "", c1: "", c2: "", c3: "", sfondo: "" };</script>
+<script src="../palette.js"></script>
 <title>Cornice webcam</title>
 <!--
   Cornice animata con bordo sfumato che ruota, interno trasparente.
@@ -20,12 +25,12 @@
     -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
     -webkit-mask-composite: xor; mask-composite: exclude; padding: var(--spessore); }
   .cornice::before { content: ""; position: absolute; left: 50%; top: 50%; width: 200vmax; height: 200vmax; margin: -100vmax 0 0 -100vmax;
-    background: conic-gradient(#1d4ed8, #06b6d4, #10b981, #34d399, #06b6d4, #1d4ed8);
+    background: conic-gradient(var(--c1), var(--c3), var(--c2), var(--c2-chiaro), var(--c3), var(--c1));
     animation: gira 6s linear infinite; }
-  .bagliore { position: absolute; inset: 0; border-radius: var(--raggio); box-shadow: inset 0 0 25px rgba(6,182,212,.35); pointer-events: none; }
+  .bagliore { position: absolute; inset: 0; border-radius: var(--raggio); box-shadow: inset 0 0 25px rgba(var(--c3-rgb),.35); pointer-events: none; }
   .nome { position: absolute; left: calc(var(--spessore) + 16px); bottom: calc(var(--spessore) + 16px);
-    padding: 8px 18px; border-radius: 10px; background: rgba(4,9,20,.82); color: #fff; font-size: 26px; font-weight: 700;
-    border-left: 5px solid #10b981; }
+    padding: 8px 18px; border-radius: 10px; background: rgba(var(--sfondo-rgb),.82); color: #fff; font-size: 26px; font-weight: 700;
+    border-left: 5px solid var(--c2); }
   .nome:empty { display: none; }
   @keyframes gira { to { transform: rotate(360deg); } }
 </style>

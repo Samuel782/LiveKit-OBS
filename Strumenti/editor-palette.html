@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Editor palette</title>
+<script src="../palette.js"></script>
+<style>
+  :root { --ui: #16181d; --pannello: #1f2228; --linea: #30343c; --testo: #e8e9ec; --tenue: #9a9ca5; --evid: #5b8def; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--ui); color: var(--testo); font: 14px/1.45 -apple-system, "Helvetica Neue", Arial, sans-serif; }
+  .app { display: grid; grid-template-columns: 340px 1fr; min-height: 100vh; }
+  aside { background: var(--pannello); border-right: 1px solid var(--linea); padding: 20px; overflow-y: auto; }
+  main { padding: 20px; display: flex; flex-direction: column; gap: 16px; min-width: 0; }
+  h1 { font-size: 18px; margin: 0 0 4px; }
+  .sotto { color: var(--tenue); font-size: 12px; margin: 0 0 18px; }
+  h2 { font-size: 11px; color: var(--tenue); text-transform: uppercase; letter-spacing: .08em; margin: 20px 0 8px; font-weight: 600; }
+  select, input[type=text] { width: 100%; padding: 8px 10px; background: var(--ui); color: var(--testo); border: 1px solid var(--linea); border-radius: 6px; font-size: 14px; }
+  .temi { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+  .tema { display: flex; align-items: center; gap: 8px; padding: 7px 8px; background: var(--ui); border: 1px solid var(--linea); border-radius: 6px; cursor: pointer; color: var(--testo); font-size: 12px; text-align: left; }
+  .tema:hover { border-color: var(--tenue); }
+  .tema.attivo { border-color: var(--evid); box-shadow: 0 0 0 1px var(--evid); }
+  .campioni { display: flex; flex: none; border-radius: 4px; overflow: hidden; }
+  .campioni i { width: 11px; height: 20px; }
+  .colore { display: grid; grid-template-columns: 44px 1fr 90px; gap: 10px; align-items: center; margin-bottom: 8px; }
+  .colore input[type=color] { width: 44px; height: 34px; border: 1px solid var(--linea); border-radius: 6px; background: var(--ui); padding: 2px; cursor: pointer; }
+  .colore b { font-weight: 600; } .colore small { display: block; color: var(--tenue); font-size: 11px; font-weight: 400; }
+  .colore input[type=text] { font-family: ui-monospace, Menlo, monospace; font-size: 12px; padding: 6px 8px; }
+  .anteprima { position: relative; width: 100%; aspect-ratio: 16 / 9; border-radius: 10px; overflow: hidden; border: 1px solid var(--linea);
+    background: linear-gradient(rgba(255,255,255,.04) 1px, transparent 1px) 0 0/40px 40px, linear-gradient(90deg, rgba(255,255,255,.04) 1px, transparent 1px) 0 0/40px 40px, #2a2f3a; }
+  .anteprima iframe { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; border: 0; transform-origin: 0 0; background: transparent; }
+  .riga { display: flex; gap: 8px; align-items: center; }
+  .riga select { flex: 1; }
+  button.az { padding: 8px 12px; background: var(--evid); color: #fff; border: 0; border-radius: 6px; font-weight: 600; cursor: pointer; white-space: nowrap; }
+  button.az.sec { background: var(--pannello); border: 1px solid var(--linea); }
+  .blocco { background: var(--pannello); border: 1px solid var(--linea); border-radius: 10px; padding: 14px 16px; }
+  .blocco h3 { margin: 0 0 4px; font-size: 14px; }
+  .blocco p { margin: 0 0 10px; color: var(--tenue); font-size: 12px; }
+  pre { margin: 0; padding: 10px 12px; background: var(--ui); border: 1px solid var(--linea); border-radius: 6px; overflow-x: auto;
+    font: 12px/1.5 ui-monospace, Menlo, monospace; white-space: pre-wrap; word-break: break-all; color: #cfe3ff; }
+  .copiato { color: #6ee7b7; font-size: 12px; margin-left: 8px; opacity: 0; transition: opacity .2s; }
+  .copiato.si { opacity: 1; }
+  .uscite { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 12px; }
+  @media (max-width: 800px) { .app { grid-template-columns: 1fr; } aside { border-right: 0; border-bottom: 1px solid var(--linea); } }
+</style>
+</head>
+<body>
+<div class="app">
+  <aside>
+    <h1>🎨 Editor palette</h1>
+    <p class="sotto">Scegli un tema o i tuoi colori e guarda subito il risultato. Poi copia il codice nel punto che preferisci.</p>
+
+    <h2>Elemento da provare</h2>
+    <select id="elemento"></select>
+
+    <h2>Temi pronti</h2>
+    <div class="temi" id="temi"></div>
+
+    <h2>Colori</h2>
+    <div id="colori"></div>
+  </aside>
+
+  <main>
+    <div class="anteprima" id="box"><iframe id="frame"></iframe></div>
+    <div class="riga">
+      <button class="az sec" id="ricarica">↻ Riavvia animazione</button>
+      <button class="az sec" id="apri">Apri a schermo intero ↗</button>
+    </div>
+
+    <div class="uscite">
+      <div class="blocco">
+        <h3>① Solo questa Fonte Browser</h3>
+        <p>In OBS togli la spunta da <i>File locale</i> e incolla questo indirizzo nel campo URL.</p>
+        <pre id="outUrl"></pre>
+        <div class="riga" style="margin-top:8px"><button class="az" data-copia="outUrl">Copia URL</button><span class="copiato"></span></div>
+      </div>
+      <div class="blocco">
+        <h3>② Solo questo file</h3>
+        <p>Apri il file .html e sostituisci la riga <code>window.PALETTE_FILE = …</code> in cima con questa.</p>
+        <pre id="outFile"></pre>
+        <div class="riga" style="margin-top:8px"><button class="az" data-copia="outFile">Copia riga</button><span class="copiato"></span></div>
+      </div>
+      <div class="blocco">
+        <h3>③ Tutti i file</h3>
+        <p>Apri <code>palette.js</code> (nella cartella principale) e sostituisci il blocco <i>PERSONALIZZA QUI</i>.</p>
+        <pre id="outTutti"></pre>
+        <div class="riga" style="margin-top:8px"><button class="az" data-copia="outTutti">Copia blocco</button><span class="copiato"></span></div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script>
+  const ELEMENTI = {
+    "Sfondi": ["aurora-blu-verde", "aurora-zona-testo", "aurora-smeraldo", "aurora-dinamica", "griglia-prospettiva", "costellazione",
+               "onde-luminose", "campo-stellare", "bokeh-luci", "esagoni-tech", "gradiente-fluido"],
+    "Schermate": ["inizio-diretta", "pausa", "fine-diretta"],
+    "Overlay": ["lower-third/lower-third", "orologio", "orologio-analogico", "badge-in-diretta", "conto-alla-rovescia", "cronometro",
+                "testo-scorrevole", "social-rotanti", "barra-obiettivo", "cornice-webcam", "bagliore-inferiore", "grana-vignetta"],
+    "Transizioni": ["pannelli-obliqui", "cerchio-espansione", "strisce-verticali"],
+  };
+  // parametri usati solo nell'anteprima, per vedere subito qualcosa
+  const DEMO = { "lower-third/lower-third": "autoplay=1", "cronometro": "avvio=1", "cornice-webcam": "nome=Mario%20Rossi",
+                 "pannelli-obliqui": "anteprima=1", "cerchio-espansione": "anteprima=1", "strisce-verticali": "anteprima=1" };
+  const RUOLI = [["c1", "Principale"], ["c2", "Secondario"], ["c3", "Accento"], ["sfondo", "Sfondo"]];
+  const TEMI = PAL.temi;
+  const $ = (id) => document.getElementById(id);
+
+  let stato = { tema: PAL.tema, c1: PAL.c1, c2: PAL.c2, c3: PAL.c3, sfondo: PAL.sfondo };
+  const modificato = () => !TEMI[stato.tema] || RUOLI.some(([k]) => TEMI[stato.tema][k].toLowerCase() !== stato[k].toLowerCase());
+
+  // elenco elementi
+  for (const [gruppo, nomi] of Object.entries(ELEMENTI)) {
+    const og = document.createElement("optgroup"); og.label = gruppo;
+    for (const n of nomi) { const o = document.createElement("option"); o.value = gruppo + "/" + n + ".html"; o.textContent = n.replace("lower-third/", ""); og.appendChild(o); }
+    $("elemento").appendChild(og);
+  }
+  try { const s = localStorage.getItem("editor-palette-elemento"); if (s) $("elemento").value = s; } catch (e) {}
+
+  // temi
+  for (const [nome, t] of Object.entries(TEMI)) {
+    const b = document.createElement("button"); b.className = "tema"; b.dataset.tema = nome;
+    b.innerHTML = `<span class="campioni">${["c1", "c3", "c2", "sfondo"].map(k => `<i style="background:${t[k]}"></i>`).join("")}</span><span></span>`;
+    b.lastChild.textContent = nome;
+    b.onclick = () => { stato = { tema: nome, ...t }; sincronizza(); aggiorna(); };
+    $("temi").appendChild(b);
+  }
+
+  // selettori colore
+  for (const [k, etichetta] of RUOLI) {
+    const r = document.createElement("div"); r.className = "colore";
+    r.innerHTML = `<input type="color" id="pk-${k}"><b>${etichetta}<small>${k}</small></b><input type="text" id="tx-${k}" maxlength="7">`;
+    $("colori").appendChild(r);
+    $("pk-" + k).oninput = (e) => { stato[k] = e.target.value; $("tx-" + k).value = e.target.value; aggiorna(); };
+    $("tx-" + k).onchange = (e) => {
+      const v = "#" + e.target.value.trim().replace(/^#/, "");
+      if (/^#[0-9a-f]{6}$/i.test(v)) { stato[k] = v.toLowerCase(); $("pk-" + k).value = stato[k]; aggiorna(); } else e.target.value = stato[k];
+    };
+  }
+  function sincronizza() { for (const [k] of RUOLI) { $("pk-" + k).value = stato[k]; $("tx-" + k).value = stato[k]; } }
+
+  function parametri() {
+    if (!modificato()) return "tema=" + stato.tema;
+    return RUOLI.map(([k]) => k + "=" + stato[k].slice(1)).join("&");
+  }
+  function urlElemento(demo) {
+    const rel = $("elemento").value, nome = rel.replace(/^[^/]+\//, "").replace(".html", "");
+    const extra = demo && DEMO[nome] ? "&" + DEMO[nome] : "";
+    return new URL("../" + rel, location.href).href + "?" + parametri() + extra;
+  }
+
+  let timer;
+  function aggiorna() {
+    document.querySelectorAll(".tema").forEach(b => b.classList.toggle("attivo", !modificato() && b.dataset.tema === stato.tema));
+    $("outUrl").textContent = urlElemento(false);
+    const f = modificato() ? `{ tema: "", c1: "${stato.c1}", c2: "${stato.c2}", c3: "${stato.c3}", sfondo: "${stato.sfondo}" }`
+                           : `{ tema: "${stato.tema}", c1: "", c2: "", c3: "", sfondo: "" }`;
+    $("outFile").textContent = `<script>window.PALETTE_FILE = ${f};<\/script>`;
+    $("outTutti").textContent = modificato()
+      ? `const TEMA_PREDEFINITO = "blu-verde";\nconst COLORI_PERSONALIZZATI = {\n  c1: "${stato.c1}",\n  c2: "${stato.c2}",\n  c3: "${stato.c3}",\n  sfondo: "${stato.sfondo}",\n};`
+      : `const TEMA_PREDEFINITO = "${stato.tema}";\nconst COLORI_PERSONALIZZATI = {\n};`;
+    clearTimeout(timer); timer = setTimeout(() => { $("frame").src = urlElemento(true); }, 150);
+  }
+
+  function scala() { $("frame").style.transform = `scale(${$("box").clientWidth / 1920})`; }
+  addEventListener("resize", scala); scala();
+
+  $("elemento").onchange = () => { try { localStorage.setItem("editor-palette-elemento", $("elemento").value); } catch (e) {} aggiorna(); };
+  $("ricarica").onclick = () => { $("frame").src = "about:blank"; setTimeout(() => $("frame").src = urlElemento(true), 50); };
+  $("apri").onclick = () => window.open(urlElemento(true), "_blank");
+  document.querySelectorAll("[data-copia]").forEach(b => b.onclick = async () => {
+    const testo = $(b.dataset.copia).textContent, ok = b.nextElementSibling;
+    try { await navigator.clipboard.writeText(testo); }
+    catch (e) { const t = document.createElement("textarea"); t.value = testo; document.body.appendChild(t); t.select(); document.execCommand("copy"); t.remove(); }
+    ok.textContent = "Copiato ✓"; ok.classList.add("si"); setTimeout(() => ok.classList.remove("si"), 1500);
+  });
+
+  sincronizza(); aggiorna();
+</script>
+</body>
+</html>

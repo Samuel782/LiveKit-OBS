@@ -2,11 +2,16 @@
 <html lang="it">
 <head>
 <meta charset="UTF-8">
+<!-- PALETTE: lascia vuoto per usare quella comune (palette.js), oppure scegli un tema
+     (blu-verde, viola-rosa, tramonto, cyberpunk, foresta, oro, fuoco, oceano, ghiaccio, monocromo)
+     o colori esadecimali validi solo per questo file. -->
+<script>window.PALETTE_FILE = { tema: "", c1: "", c2: "", c3: "", sfondo: "" };</script>
+<script src="../palette.js"></script>
 <title>Transizione OBS HTML</title>
 <style>
   :root {
-    --colore1: rgba(29, 78, 216);   /* Blu */
-    --colore2: rgba(16, 185, 129);  /* Verde */
+    --colore1: var(--c1);   /* Blu */
+    --colore2: var(--c2);  /* Verde */
   }
 
   html, body {

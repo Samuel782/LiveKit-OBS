@@ -2,6 +2,11 @@
 <html lang="it">
 <head>
 <meta charset="utf-8">
+<!-- PALETTE: lascia vuoto per usare quella comune (palette.js), oppure scegli un tema
+     (blu-verde, viola-rosa, tramonto, cyberpunk, foresta, oro, fuoco, oceano, ghiaccio, monocromo)
+     o colori esadecimali validi solo per questo file. -->
+<script>window.PALETTE_FILE = { tema: "", c1: "", c2: "", c3: "", sfondo: "" };</script>
+<script src="../../palette.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Controllo Lower Third</title>
 <style>
@@ -169,6 +174,7 @@
     if (e.key === "Escape") hide();
   });
 
+  if (window.PAL) $("color").value = PAL.c1;
   render();
 </script>
 </body>

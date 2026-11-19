@@ -2,6 +2,11 @@
 <html lang="it">
 <head>
 <meta charset="UTF-8">
+<!-- PALETTE: lascia vuoto per usare quella comune (palette.js), oppure scegli un tema
+     (blu-verde, viola-rosa, tramonto, cyberpunk, foresta, oro, fuoco, oceano, ghiaccio, monocromo)
+     o colori esadecimali validi solo per questo file. -->
+<script>window.PALETTE_FILE = { tema: "", c1: "", c2: "", c3: "", sfondo: "" };</script>
+<script src="../palette.js"></script>
 <title>Orologio analogico</title>
 <!--
   Orologio analogico con lancette fluide, sfondo trasparente. Consigliato: Fonte Browser 400x400.
@@ -18,16 +23,16 @@
 <body>
 <svg viewBox="0 0 100 100">
   <defs>
-    <linearGradient id="bordo" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#3b82f6"/><stop offset="1" stop-color="#10b981"/></linearGradient>
-    <radialGradient id="quadrante"><stop offset="0" stop-color="#0b1a33"/><stop offset="1" stop-color="#040914"/></radialGradient>
+    <linearGradient id="bordo" x1="0" y1="0" x2="1" y2="1"><stop offset="0" style="stop-color:var(--c1-chiaro)"/><stop offset="1" style="stop-color:var(--c2)"/></linearGradient>
+    <radialGradient id="quadrante"><stop offset="0" style="stop-color:var(--sfondo-chiaro)"/><stop offset="1" style="stop-color:var(--sfondo)"/></radialGradient>
   </defs>
   <circle cx="50" cy="50" r="47" fill="url(#quadrante)" stroke="url(#bordo)" stroke-width="2.5"/>
   <g id="tacche"></g>
   <text class="citta" id="citta" x="50" y="68"></text>
   <line id="h" x1="50" y1="54" x2="50" y2="28" stroke="#fff" stroke-width="3" stroke-linecap="round"/>
   <line id="m" x1="50" y1="56" x2="50" y2="15" stroke="#fff" stroke-width="2" stroke-linecap="round"/>
-  <line id="s" x1="50" y1="60" x2="50" y2="12" stroke="#10b981" stroke-width=".9" stroke-linecap="round"/>
-  <circle cx="50" cy="50" r="2.4" fill="#10b981"/><circle cx="50" cy="50" r="1" fill="#040914"/>
+  <line id="s" x1="50" y1="60" x2="50" y2="12" style="stroke:var(--c2)" stroke-width=".9" stroke-linecap="round"/>
+  <circle cx="50" cy="50" r="2.4" style="fill:var(--c2)"/><circle cx="50" cy="50" r="1" style="fill:var(--sfondo)"/>
 </svg>
 <script>
   const Q = new URLSearchParams(location.search), FUSO = Q.get("fuso");

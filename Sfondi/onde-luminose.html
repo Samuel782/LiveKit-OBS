@@ -2,19 +2,24 @@
 <html lang="it">
 <head>
 <meta charset="UTF-8">
+<!-- PALETTE: lascia vuoto per usare quella comune (palette.js), oppure scegli un tema
+     (blu-verde, viola-rosa, tramonto, cyberpunk, foresta, oro, fuoco, oceano, ghiaccio, monocromo)
+     o colori esadecimali validi solo per questo file. -->
+<script>window.PALETTE_FILE = { tema: "", c1: "", c2: "", c3: "", sfondo: "" };</script>
+<script src="../palette.js"></script>
 <title>Onde luminose</title>
 <style>
   html, body { margin: 0; width: 100vw; height: 100vh; overflow: hidden;
-    background: radial-gradient(ellipse at 50% 120%, #0b2545 0%, #040914 60%); }
+    background: radial-gradient(ellipse at 50% 120%, var(--sfondo-chiaro) 0%, var(--sfondo) 60%); }
   canvas { display: block; width: 100vw; height: 100vh; }
 </style>
 </head>
 <body>
 <canvas id="c"></canvas>
 <script>
-  /* ====== PERSONALIZZA QUI (o via URL: ?colori=1d4ed8,06b6d4,10b981&velocita=1) ====== */
+  /* ====== PERSONALIZZA QUI (o via URL: ?velocita=1&altezza=0.62) ====== */
   const Q = new URLSearchParams(location.search);
-  const COLORI = (Q.get("colori") || "1d4ed8,06b6d4,10b981,3b82f6,34d399").split(",").map(c => "#" + c);
+  const COLORI = [PAL.c1, PAL.c3, PAL.c2, PAL["c1-chiaro"], PAL["c2-chiaro"]];   // dalla palette
   const VELOCITA = +(Q.get("velocita") || 1);
   const ALTEZZA = +(Q.get("altezza") || 0.62);   // posizione verticale delle onde (0-1)
   /* =================================================================================== */

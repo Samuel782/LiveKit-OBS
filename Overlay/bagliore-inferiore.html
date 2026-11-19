@@ -2,6 +2,11 @@
 <html lang="it">
 <head>
     <meta charset="UTF-8">
+<!-- PALETTE: lascia vuoto per usare quella comune (palette.js), oppure scegli un tema
+     (blu-verde, viola-rosa, tramonto, cyberpunk, foresta, oro, fuoco, oceano, ghiaccio, monocromo)
+     o colori esadecimali validi solo per questo file. -->
+<script>window.PALETTE_FILE = { tema: "", c1: "", c2: "", c3: "", sfondo: "" };</script>
+<script src="../palette.js"></script>
     <style>
         body {
             margin: 0;
@@ -19,12 +24,12 @@
         }
         #b1 { 
             width: 600px; height: 250px; 
-            background: #1e3a8a; 
+            background: var(--c1-scuro); 
             bottom: 20px; left: 10%; 
         }
         #b2 { 
             width: 700px; height: 250px; 
-            background: #047857; 
+            background: var(--c2-scuro); 
             bottom: 20px; right: 10%; 
             animation-duration: 16s;
         }

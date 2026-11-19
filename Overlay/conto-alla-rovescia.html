@@ -2,6 +2,11 @@
 <html lang="it">
 <head>
 <meta charset="UTF-8">
+<!-- PALETTE: lascia vuoto per usare quella comune (palette.js), oppure scegli un tema
+     (blu-verde, viola-rosa, tramonto, cyberpunk, foresta, oro, fuoco, oceano, ghiaccio, monocromo)
+     o colori esadecimali validi solo per questo file. -->
+<script>window.PALETTE_FILE = { tema: "", c1: "", c2: "", c3: "", sfondo: "" };</script>
+<script src="../palette.js"></script>
 <title>Conto alla rovescia</title>
 <!--
   Timer con anello di avanzamento, sfondo trasparente.
@@ -18,22 +23,22 @@
   body { display: grid; place-items: center; height: 100vh; user-select: none; }
   .wrap { position: relative; width: 90vmin; height: 90vmin; }
   svg { width: 100%; height: 100%; transform: rotate(-90deg); overflow: visible; }
-  .fondo { fill: rgba(4,9,20,.75); stroke: rgba(255,255,255,.1); stroke-width: 6; }
-  .arco { fill: none; stroke: url(#g); stroke-width: 6; stroke-linecap: round; filter: drop-shadow(0 0 6px rgba(16,185,129,.8));
+  .fondo { fill: rgba(var(--sfondo-rgb),.75); stroke: rgba(255,255,255,.1); stroke-width: 6; }
+  .arco { fill: none; stroke: url(#g); stroke-width: 6; stroke-linecap: round; filter: drop-shadow(0 0 6px rgba(var(--c2-rgb),.8));
     transition: stroke-dashoffset .3s linear; }
   .testo { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; }
   .num { font-size: 20vmin; font-weight: 800; font-variant-numeric: tabular-nums; letter-spacing: -.02em; line-height: 1; }
   .etichetta { font-size: 5vmin; letter-spacing: .3em; text-transform: uppercase; color: rgba(255,255,255,.65); margin-top: 3vmin; padding-left: .3em; }
   .etichetta:empty { display: none; }
   .pausa .num { opacity: .5; }
-  .finito .num { color: #6ee7b7; animation: lampo 1s steps(2) infinite; }
+  .finito .num { color: var(--c2-chiaro); animation: lampo 1s steps(2) infinite; }
   @keyframes lampo { 50% { opacity: .3; } }
 </style>
 </head>
 <body>
   <div class="wrap" id="wrap">
     <svg viewBox="0 0 100 100">
-      <defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#3b82f6"/><stop offset=".5" stop-color="#06b6d4"/><stop offset="1" stop-color="#10b981"/></linearGradient></defs>
+      <defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" style="stop-color:var(--c1-chiaro)"/><stop offset=".5" style="stop-color:var(--c3)"/><stop offset="1" style="stop-color:var(--c2)"/></linearGradient></defs>
       <circle class="fondo" cx="50" cy="50" r="46"/>
       <circle class="arco" id="arco" cx="50" cy="50" r="46"/>
     </svg>

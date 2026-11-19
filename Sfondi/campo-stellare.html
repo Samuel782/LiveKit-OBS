@@ -2,15 +2,20 @@
 <html lang="it">
 <head>
 <meta charset="UTF-8">
+<!-- PALETTE: lascia vuoto per usare quella comune (palette.js), oppure scegli un tema
+     (blu-verde, viola-rosa, tramonto, cyberpunk, foresta, oro, fuoco, oceano, ghiaccio, monocromo)
+     o colori esadecimali validi solo per questo file. -->
+<script>window.PALETTE_FILE = { tema: "", c1: "", c2: "", c3: "", sfondo: "" };</script>
+<script src="../palette.js"></script>
 <title>Campo stellare</title>
 <style>
   html, body { margin: 0; width: 100vw; height: 100vh; overflow: hidden;
-    background: radial-gradient(ellipse at 50% 50%, #0a1a33 0%, #02050c 75%); }
+    background: radial-gradient(ellipse at 50% 50%, var(--sfondo-chiaro) 0%, var(--sfondo) 75%); }
   canvas { display: block; width: 100vw; height: 100vh; }
   .nebulosa { position: fixed; inset: 0; pointer-events: none; mix-blend-mode: screen;
     background:
-      radial-gradient(ellipse 40% 30% at 25% 35%, rgba(29,78,216,.30), transparent 70%),
-      radial-gradient(ellipse 35% 30% at 75% 65%, rgba(16,185,129,.22), transparent 70%);
+      radial-gradient(ellipse 40% 30% at 25% 35%, rgba(var(--c1-rgb),.30), transparent 70%),
+      radial-gradient(ellipse 35% 30% at 75% 65%, rgba(var(--c2-rgb),.22), transparent 70%);
     animation: respira 20s ease-in-out infinite alternate; }
   @keyframes respira { to { transform: scale(1.15) rotate(3deg); opacity: .7; } }
 </style>
@@ -30,7 +35,7 @@
   const size = () => { W = cv.width = innerWidth * devicePixelRatio; H = cv.height = innerHeight * devicePixelRatio; };
   size(); addEventListener("resize", size);
 
-  const TINTE = ["#ffffff", "#bfdbfe", "#a7f3d0", "#93c5fd"];
+  const TINTE = ["#ffffff", PAL["c1-chiaro"], PAL["c2-chiaro"], PAL["c3-chiaro"]];
   const nuova = (z) => ({ x: (Math.random() - .5) * 2, y: (Math.random() - .5) * 2, z: z ?? Math.random(),
     c: TINTE[(Math.random() * TINTE.length) | 0], tw: Math.random() * 6.28 });
   const stelle = Array.from({ length: STELLE }, () => nuova());

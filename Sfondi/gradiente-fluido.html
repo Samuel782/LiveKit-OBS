@@ -2,14 +2,19 @@
 <html lang="it">
 <head>
 <meta charset="UTF-8">
+<!-- PALETTE: lascia vuoto per usare quella comune (palette.js), oppure scegli un tema
+     (blu-verde, viola-rosa, tramonto, cyberpunk, foresta, oro, fuoco, oceano, ghiaccio, monocromo)
+     o colori esadecimali validi solo per questo file. -->
+<script>window.PALETTE_FILE = { tema: "", c1: "", c2: "", c3: "", sfondo: "" };</script>
+<script src="../palette.js"></script>
 <title>Gradiente fluido</title>
 <style>
   /* ====== PERSONALIZZA QUI ====== */
   :root {
-    --a: #1d4ed8;   /* blu */
-    --b: #10b981;   /* verde */
-    --c: #06b6d4;   /* ciano */
-    --d: #0f172a;   /* blu notte */
+    --a: var(--c1);   /* blu */
+    --b: var(--c2);   /* verde */
+    --c: var(--c3);   /* ciano */
+    --d: var(--sfondo-chiaro);   /* blu notte */
     --durata: 30s;  /* più alto = più lento */
   }
   /* ============================== */
@@ -31,7 +36,7 @@
     animation-direction: reverse;
     mix-blend-mode: overlay; opacity: .7;
   }
-  .velo { position: absolute; inset: 0; background: rgba(4, 9, 20, .45); }
+  .velo { position: absolute; inset: 0; background: rgba(var(--sfondo-rgb), .45); }
   .grana { position: absolute; inset: 0; opacity: .08; mix-blend-mode: overlay;
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
   @keyframes gira { to { transform: rotate(360deg); } }
