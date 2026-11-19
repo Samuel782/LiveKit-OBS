@@ -16,7 +16,7 @@
 { // (le graffe tengono queste variabili separate da quelle degli altri file)
 
 /* ====== PERSONALIZZA QUI: palette di tutti i file ====== */
-const TEMA_PREDEFINITO = "blu-verde";
+const TEMA_PREDEFINITO = "monocromo";
 const COLORI_PERSONALIZZATI = {
   // c1: "#1d4ed8",
   // c2: "#10b981",

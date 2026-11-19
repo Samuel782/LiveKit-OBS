@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SlideOBS – Uscita</title>
+<link rel="icon" href="/favicon.ico">
+<style>
+  html, body { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background: transparent; }
+  body { transition: background-color .3s; }
+  #stage { position: fixed; inset: 0; isolation: isolate; transition-property: opacity; transition-timing-function: ease-in-out; }
+  #stage canvas { position: absolute; display: block; opacity: 0; transition-property: opacity; transition-timing-function: linear; }
+  #stage canvas.front { opacity: 1; }
+  #stage.plus canvas.top { mix-blend-mode: plus-lighter; }
+  #black { position: fixed; inset: 0; background: #000; opacity: 0; pointer-events: none; transition-property: opacity; transition-timing-function: ease-in-out; }
+  #black.on { opacity: 1; }
+  #stage.hidden { opacity: 0; }
+</style>
+</head>
+<body>
+<div id="stage"><canvas id="c0"></canvas><canvas id="c1"></canvas></div>
+<div id="black"></div>
+<script type="module" src="/static/output.js"></script>
+</body>
+</html>

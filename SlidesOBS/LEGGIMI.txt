@@ -1,0 +1,83 @@
+SlideOBS – slide PDF in OBS Studio
+==================================
+
+Nessuna installazione: è un solo file. Funziona anche offline.
+
+  Windows ............ SlideOBS.exe
+  Mac (Apple M1/M2…) . SlideOBS-mac-arm64
+  Mac (Intel) ........ SlideOBS-mac-intel
+
+
+1. AVVIO
+   Fai doppio clic sul programma. Si apre una finestra con gli indirizzi
+   e il browser apre la regia (http://localhost:8765/control).
+   Per spegnere SlideOBS chiudi quella finestra.
+   I PDF caricati finiscono nella cartella "SlideOBS-documenti" accanto
+   al programma. Documento, pagina e impostazioni restano salvati.
+   Se la porta 8765 è occupata viene usata la 8766, 8767…: in quel caso
+   la finestra lo segnala e devi usare in OBS l'indirizzo indicato.
+
+2. IN OBS
+   Sorgenti → + → Browser
+     URL:      http://localhost:8765/output
+     Larghezza: 1920   Altezza: 1080
+   Lo sfondo è trasparente. Se chiudi e riapri SlideOBS, l'uscita in OBS
+   si ricollega da sola.
+
+3. REGIA DENTRO OBS (facoltativo)
+   Docks → Custom Browser Docks… (in OBS 30+: Docks → Custom Browser Docks)
+     Nome: SlideOBS     URL: http://localhost:8765/control
+
+4. MAC, LA PRIMA VOLTA
+   Il programma non è firmato: tasto destro sul file → Apri → Apri.
+   Se il Mac dice che il file è danneggiato o non si apre, nel Terminale:
+     xattr -d com.apple.quarantine ~/Downloads/SlideOBS-mac-arm64
+   (sostituisci il percorso con quello del tuo file; trascinalo nel
+   Terminale per inserirlo). Se non parte con doppio clic:
+     chmod +x ~/Downloads/SlideOBS-mac-arm64
+
+5. WINDOWS SMARTSCREEN
+   Se compare "Windows ha protetto il PC": clic su "Ulteriori informazioni"
+   → "Esegui comunque". Se il firewall chiede l'accesso puoi negarlo:
+   SlideOBS ascolta solo su questo computer.
+
+6. ESPORTARE LA PRESENTAZIONE IN PDF
+   SlideOBS accetta solo PDF (non PPTX, KEY, ODP).
+   - PowerPoint:     File → Esporta → Crea documento PDF/XPS
+                     (Mac: File → Esporta… → Formato: PDF)
+   - Keynote:        Archivio → Esporta come → PDF… (qualità Ottima)
+   - Google Slides:  File → Scarica → Documento PDF (.pdf)
+   - LibreOffice:    File → Esporta nel formato PDF…
+   Le animazioni non vengono esportate: ogni "build" che ti serve deve
+   essere una slide separata.
+
+7. COMANDI DA TASTIERA (nella regia)
+   →  Spazio  PagGiù  Invio .... avanti
+   ←  PagSu ..................... indietro
+   Home / Fine .................. prima / ultima
+   B  oppure  . ................. schermo nero
+   Funzionano anche i telecomandi per presentazioni.
+
+8. INDIRIZZI PER STREAM DECK / BITFOCUS COMPANION
+   (GET o POST; con Stream Deck usa l'azione "Website" in background,
+    con Companion il modulo "Generic HTTP")
+   http://localhost:8765/api/next          avanti
+   http://localhost:8765/api/prev          indietro
+   http://localhost:8765/api/first         prima slide
+   http://localhost:8765/api/last          ultima slide
+   http://localhost:8765/api/goto?p=5      vai alla slide 5
+   http://localhost:8765/api/black         schermo nero sì/no
+   http://localhost:8765/api/black?on=1    schermo nero acceso
+   http://localhost:8765/api/black?on=0    schermo nero spento
+   http://localhost:8765/api/state         stato attuale (JSON)
+   http://localhost:8765/api/open?name=nome.pdf   apre un documento
+   http://localhost:8765/api/settings?background=green&transition=cut
+       sfondo: transparent | black | white | green | color (&color=%23RRGGBB)
+       transizione: fade300 | fade600 | cut
+       adattamento (fit): contain | cover | width
+       margin=N   quality=1|2   blackMode=black|hide
+
+OPZIONI DA RIGA DI COMANDO
+   --no-browser    non aprire il browser all'avvio
+   --port N        porta preferita (predefinita 8765)
+   --dir CARTELLA  cartella dei documenti diversa
