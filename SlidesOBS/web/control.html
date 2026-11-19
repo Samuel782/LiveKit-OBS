@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SlideOBS – Regia</title>
+<link rel="icon" href="/favicon.ico">
+<link rel="stylesheet" href="/static/control.css">
+</head>
+<body>
+<header class="top">
+  <div class="brand"><img src="/favicon.ico" alt="" width="22" height="22"><span>SlideOBS</span></div>
+  <div class="docname" id="docName" title="">Nessun documento</div>
+  <div class="conn" id="conn" data-on="0"><span class="dot"></span><span class="label">Connessione…</span></div>
+</header>
+
+<main class="layout">
+  <section class="live">
+    <div class="previews">
+      <figure class="pv pv-air">
+        <div class="pv-box" id="pvAir"><canvas></canvas><div class="pv-mask">NERO</div><div class="pv-empty">Nessuna slide</div></div>
+        <figcaption><span class="tag tag-air">IN ONDA</span><span id="pvAirNum"></span></figcaption>
+      </figure>
+      <figure class="pv pv-next">
+        <div class="pv-box" id="pvNext"><canvas></canvas><div class="pv-empty">Fine</div></div>
+        <figcaption><span class="tag">SUCCESSIVA</span><span id="pvNextNum"></span></figcaption>
+      </figure>
+    </div>
+
+    <div class="transport">
+      <div class="nav">
+        <button class="btn icon" data-cmd="first" title="Prima (Home)" aria-label="Prima slide"><svg viewBox="0 0 24 24"><path d="M6 5h2v14H6zM20 5v14L9 12z"/></svg></button>
+        <button class="btn icon" data-cmd="prev" title="Indietro (←, PagSu)" aria-label="Slide precedente"><svg viewBox="0 0 24 24"><path d="M17 5v14L6 12z"/></svg></button>
+        <div class="counter" id="counter" aria-live="polite">– / –</div>
+        <button class="btn icon primary" data-cmd="next" title="Avanti (→, Spazio, PagGiù, Invio)" aria-label="Slide successiva"><svg viewBox="0 0 24 24"><path d="M7 5v14l11-7z"/></svg></button>
+        <button class="btn icon" data-cmd="last" title="Ultima (Fine)" aria-label="Ultima slide"><svg viewBox="0 0 24 24"><path d="M16 5h2v14h-2zM4 5v14l11-7z"/></svg></button>
+      </div>
+      <form class="goto" id="gotoForm">
+        <label for="gotoInput">Vai a</label>
+        <input id="gotoInput" type="number" min="1" inputmode="numeric" placeholder="n.">
+        <button class="btn" type="submit">Vai</button>
+      </form>
+      <button class="btn black" id="blackBtn" data-cmd="black" title="Schermo nero (B o .)">Schermo nero</button>
+    </div>
+
+    <div class="thumbs-wrap">
+      <div class="thumbs" id="thumbs"></div>
+    </div>
+  </section>
+
+  <aside class="side">
+    <section class="panel">
+      <h2>Documenti</h2>
+      <label class="drop" id="drop">
+        <input type="file" id="fileInput" accept=".pdf,application/pdf" multiple hidden>
+        <span class="drop-main">Trascina qui un PDF<br><small>oppure fai clic per sceglierlo</small></span>
+        <span class="drop-progress" hidden><span class="bar"></span><span class="ptext"></span></span>
+      </label>
+      <ul class="docs" id="docs"></ul>
+      <p class="muted small" id="docsDir"></p>
+    </section>
+
+    <section class="panel">
+      <h2>URL per OBS</h2>
+      <div class="url-row">
+        <input id="outUrl" type="text" readonly>
+        <button class="btn" id="copyBtn" type="button">Copia</button>
+      </div>
+      <p class="muted small">OBS → Sorgenti → + → Browser, 1920×1080.</p>
+    </section>
+
+    <section class="panel settings" id="settings">
+      <h2>Impostazioni di uscita</h2>
+      <div class="field">
+        <span class="flabel">Sfondo</span>
+        <div class="seg" data-key="background">
+          <button data-v="transparent">Trasparente</button><button data-v="black">Nero</button><button data-v="white">Bianco</button><button data-v="green">Verde chroma</button><button data-v="color">Colore</button>
+        </div>
+        <input type="color" id="colorInput" class="color" hidden aria-label="Colore di sfondo">
+      </div>
+      <div class="field">
+        <span class="flabel">Transizione</span>
+        <div class="seg" data-key="transition">
+          <button data-v="fade300">Dissolvenza 300 ms</button><button data-v="fade600">600 ms</button><button data-v="cut">Taglio</button>
+        </div>
+      </div>
+      <div class="field">
+        <span class="flabel">Adattamento</span>
+        <div class="seg" data-key="fit">
+          <button data-v="contain">Intera</button><button data-v="cover">Riempi</button><button data-v="width">Larghezza</button>
+        </div>
+      </div>
+      <div class="field">
+        <label class="flabel" for="marginRange">Margine <output id="marginOut">0 px</output></label>
+        <div class="range-row">
+          <input type="range" id="marginRange" min="0" max="200" step="2">
+          <input type="number" id="marginNum" min="0" max="400" aria-label="Margine in px">
+        </div>
+      </div>
+      <div class="field">
+        <span class="flabel">Qualità</span>
+        <div class="seg" data-key="quality">
+          <button data-v="1">1x</button><button data-v="2">2x (più nitida)</button>
+        </div>
+      </div>
+      <div class="field">
+        <span class="flabel">Modalità nero</span>
+        <div class="seg" data-key="blackMode">
+          <button data-v="black">Nero pieno</button><button data-v="hide">Nascondi slide</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2>Scorciatoie</h2>
+      <dl class="keys">
+        <dt>→ Spazio PagGiù Invio</dt><dd>avanti</dd>
+        <dt>← PagSu</dt><dd>indietro</dd>
+        <dt>Home / Fine</dt><dd>prima / ultima</dd>
+        <dt>B oppure .</dt><dd>schermo nero</dd>
+      </dl>
+    </section>
+  </aside>
+</main>
+
+<div class="toast" id="toast" role="status" hidden></div>
+<script type="module" src="/static/control.js"></script>
+</body>
+</html>
