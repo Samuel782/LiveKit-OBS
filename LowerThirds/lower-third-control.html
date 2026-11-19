@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Controllo Lower Third</title>
+<style>
+  :root {
+    --bg: #1e1f24;
+    --panel: #2a2c33;
+    --line: #3a3d46;
+    --text: #e8e9ec;
+    --muted: #9a9ca5;
+    --go: #2e9d5b;
+    --stop: #c0392b;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    padding: 12px;
+    background: var(--bg);
+    color: var(--text);
+    font: 13px/1.4 -apple-system, "Helvetica Neue", Arial, sans-serif;
+  }
+  .status { display: flex; align-items: center; gap: 6px; color: var(--muted); font-size: 11px; margin-bottom: 10px; }
+  .dot { width: 8px; height: 8px; border-radius: 50%; background: #777; }
+  .dot.ok { background: var(--go); }
+  .dot.err { background: var(--stop); }
+  label { display: block; font-size: 11px; color: var(--muted); margin: 8px 0 3px; text-transform: uppercase; letter-spacing: .5px; }
+  input[type=text] {
+    width: 100%; padding: 8px 10px; font-size: 14px;
+    background: var(--panel); color: var(--text);
+    border: 1px solid var(--line); border-radius: 6px; outline: none;
+  }
+  input[type=text]:focus { border-color: #5b8def; }
+  .row { display: flex; gap: 8px; align-items: end; }
+  .row > div { flex: 1; }
+  input[type=color] { width: 40px; height: 36px; border: 1px solid var(--line); border-radius: 6px; background: var(--panel); padding: 2px; }
+  .buttons { display: flex; gap: 8px; margin-top: 12px; }
+  button {
+    flex: 1; padding: 10px; font-size: 14px; font-weight: 600;
+    border: 0; border-radius: 6px; cursor: pointer; color: #fff;
+  }
+  .show { background: var(--go); }
+  .hide { background: var(--stop); }
+  .save { background: var(--panel); border: 1px solid var(--line); flex: 0 0 auto; padding: 10px 12px; }
+  button:active { transform: scale(.97); }
+  h3 { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: .5px; margin: 18px 0 6px; }
+  ul { list-style: none; margin: 0; padding: 0; }
+  li {
+    display: flex; align-items: center; gap: 8px;
+    padding: 7px 8px; margin-bottom: 4px;
+    background: var(--panel); border: 1px solid var(--line); border-radius: 6px; cursor: pointer;
+  }
+  li:hover { border-color: #5b8def; }
+  li .sw { width: 4px; align-self: stretch; border-radius: 2px; }
+  li .t { flex: 1; min-width: 0; }
+  li .n { font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  li .r { color: var(--muted); font-size: 11px; }
+  li .x { background: none; color: var(--muted); flex: 0; padding: 2px 6px; font-size: 14px; }
+  .empty { color: var(--muted); font-size: 12px; }
+  .hint { color: var(--muted); font-size: 11px; margin-top: 14px; }
+</style>
+</head>
+<body>
+  <div class="status"><span class="dot" id="dot"></span><span id="statusText">Connessione a OBS…</span></div>
+  <div class="status" id="srcStatus" style="display:none"><span class="dot err" id="srcDot"></span><span id="srcText">Grafica non collegata: aggiorna la Fonte Browser</span></div>
+
+  <label for="name">Nome</label>
+  <input type="text" id="name" placeholder="Mario Rossi">
+
+  <div class="row">
+    <div>
+      <label for="role">Ruolo</label>
+      <input type="text" id="role" placeholder="Regista">
+    </div>
+    <input type="color" id="color" value="#e63946" title="Colore">
+  </div>
+
+  <div class="buttons">
+    <button class="show" id="btnShow">▶ Mostra</button>
+    <button class="hide" id="btnHide">■ Nascondi</button>
+    <button class="save" id="btnSave" title="Salva in elenco">＋</button>
+  </div>
+
+  <h3>Elenco rapido</h3>
+  <ul id="list"></ul>
+
+  <p class="hint">Invio = mostra · Esc = nascondi · clic su un nome dell'elenco = mostra subito</p>
+
+<script src="lt-config.js"></script>
+<script src="lt-obs.js"></script>
+<script>
+  const $ = (id) => document.getElementById(id);
+  const KEY = "lower-third-presets";
+
+  const STATUS = {
+    ok:   ["ok",  "Collegato a OBS"],
+    off:  ["",    "OBS non raggiungibile (WebSocket attivo?)"],
+    auth: ["err", "Password errata: controlla lt-config.js"]
+  };
+  let sourceSeen = false;
+  const link = ltConnect({
+    onStatus(s) {
+      const [cls, txt] = STATUS[s] || STATUS.off;
+      $("dot").className = "dot " + cls;
+      $("statusText").textContent = txt;
+      $("srcStatus").style.display = s === "ok" ? "flex" : "none";
+      if (s === "ok") link.send({ action: "who" });
+    },
+    onCommand(d) {
+      if (d.action === "source-here") {
+        sourceSeen = true;
+        $("srcDot").className = "dot ok";
+        $("srcText").textContent = "Grafica collegata";
+      }
+    }
+  });
+
+  const current = () => ({
+    name: $("name").value.trim(),
+    role: $("role").value.trim(),
+    color: $("color").value.replace("#", "")
+  });
+
+  function show(data = current()) { link.send({ action: "show", ...data }); }
+  function hide() { link.send({ action: "hide" }); }
+
+  // Elenco salvato (resta in memoria nel dock)
+  function load() { try { return JSON.parse(localStorage.getItem(KEY)) || []; } catch (e) { return []; } }
+  function store(list) { try { localStorage.setItem(KEY, JSON.stringify(list)); } catch (e) {} }
+  let presets = load();
+
+  function render() {
+    const ul = $("list");
+    ul.innerHTML = "";
+    if (!presets.length) {
+      ul.innerHTML = '<li class="empty" style="cursor:default">Scrivi nome e ruolo e premi ＋ per salvarli qui.</li>';
+      return;
+    }
+    presets.forEach((p, i) => {
+      const li = document.createElement("li");
+      li.innerHTML = '<span class="sw"></span><div class="t"><div class="n"></div><div class="r"></div></div><button class="x" title="Rimuovi">✕</button>';
+      li.querySelector(".sw").style.background = "#" + p.color;
+      li.querySelector(".n").textContent = p.name;
+      li.querySelector(".r").textContent = p.role;
+      li.onclick = () => {
+        $("name").value = p.name; $("role").value = p.role; $("color").value = "#" + p.color;
+        show(p);
+      };
+      li.querySelector(".x").onclick = (e) => {
+        e.stopPropagation();
+        presets.splice(i, 1); store(presets); render();
+      };
+      ul.appendChild(li);
+    });
+  }
+
+  $("btnShow").onclick = () => show();
+  $("btnHide").onclick = hide;
+  $("btnSave").onclick = () => {
+    const c = current();
+    if (!c.name) return $("name").focus();
+    presets = presets.filter((p) => p.name !== c.name);
+    presets.push(c); store(presets); render();
+  };
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Enter" && e.target.tagName === "INPUT") show();
+    if (e.key === "Escape") hide();
+  });
+
+  render();
+</script>
+</body>
+</html>

@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            background: #040914; /* Sfondo blu scurissimo quasi nero */
+            width: 100vw;
+            height: 100vh;
+        }
+        .blob {
+            position: absolute;
+            border-radius: 50%;
+            mix-blend-mode: screen;
+            animation: edgeFloat 15s infinite alternate ease-in-out;
+        }
+        /* Blu intenso sul lato sinistro */
+        #b1 { 
+            width: 75vw; height: 75vw; 
+            background: radial-gradient(circle, rgba(29, 78, 216, 0.55) 0%, rgba(29, 78, 216, 0) 65%);
+            top: -25%; left: -25%; 
+        }
+        /* Verde smeraldo sul lato destro */
+        #b2 { 
+            width: 75vw; height: 75vw; 
+            background: radial-gradient(circle, rgba(16, 185, 129, 0.45) 0%, rgba(16, 185, 129, 0) 65%);
+            bottom: -25%; right: -25%; 
+            animation-duration: 19s;
+            animation-direction: alternate-reverse;
+        }
+        /* Tocco di ciano in alto/basso ai margini */
+        #b3 { 
+            width: 65vw; height: 65vw; 
+            background: radial-gradient(circle, rgba(6, 182, 212, 0.35) 0%, rgba(6, 182, 212, 0) 65%);
+            bottom: -30%; left: 10%; 
+            animation-duration: 13s; 
+        }
+
+        /* Zona centrale statica e scura per garantire la massima leggibilità dei sottotitoli */
+        #safe-zone {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: radial-gradient(ellipse at center, rgba(4, 9, 20, 0.92) 25%, rgba(4, 9, 20, 0.4) 65%, rgba(4, 9, 20, 0) 100%);
+            pointer-events: none;
+            z-index: 10;
+        }
+
+        @keyframes edgeFloat {
+            0% { transform: translate(-5%, -5%) scale(0.95); }
+            50% { transform: translate(8%, 5%) scale(1.05); }
+            100% { transform: translate(-3%, 8%) scale(1); }
+        }
+    </style>
+</head>
+<body>
+    <div class="blob" id="b1"></div>
+    <div class="blob" id="b2"></div>
+    <div class="blob" id="b3"></div>
+    <div id="safe-zone"></div>
+</body>
+</html>

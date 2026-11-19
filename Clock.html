@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<title>Orologio OBS</title>
+<style>
+  /* ====== PERSONALIZZA QUI ====== */
+  :root {
+    --colore-testo: #ffffff;
+    --colore-data:  rgba(255,255,255,.7);
+    --sfondo: rgba(0,0,0,0);        /* es. rgba(0,0,0,.5) per un box scuro */
+    --dimensione: 120px;            /* grandezza dell'ora */
+    --font: "SF Pro Display", "Helvetica Neue", "Segoe UI", Arial, sans-serif;
+    --allineamento: center;         /* left | center | right */
+  }
+  /* ============================== */
+
+  html, body { margin: 0; background: transparent; overflow: hidden; }
+  body {
+    display: flex; height: 100vh; align-items: center;
+    justify-content: var(--allineamento);
+  }
+  .box {
+    background: var(--sfondo); padding: .15em .4em; border-radius: .15em;
+    font-family: var(--font); font-size: var(--dimensione);
+    text-align: var(--allineamento); line-height: 1;
+  }
+  .ora {
+    color: var(--colore-testo); font-weight: 700;
+    font-variant-numeric: tabular-nums;   /* le cifre non "ballano" */
+    letter-spacing: .02em;
+    text-shadow: 0 .03em .08em rgba(0,0,0,.4);
+  }
+  .sec { font-size: .45em; opacity: .75; margin-left: .1em; }
+  .sep { animation: lampeggia 1s steps(1) infinite; }
+  @keyframes lampeggia { 50% { opacity: .25; } }
+  .data {
+    color: var(--colore-data); font-size: .22em; font-weight: 500;
+    margin-top: .35em; text-transform: capitalize; letter-spacing: .05em;
+  }
+</style>
+</head>
+<body>
+  <div class="box">
+    <div class="ora" id="ora"></div>
+    <div class="data" id="data"></div>
+  </div>
+
+<script>
+  /* ====== PERSONALIZZA QUI ====== */
+  const MOSTRA_SECONDI = true;
+  const MOSTRA_DATA = true;
+  const SEPARATORE_LAMPEGGIANTE = false;
+  const FORMATO_24H = true;
+  /* ============================== */
+
+  const elOra = document.getElementById("ora");
+  const elData = document.getElementById("data");
+  if (!MOSTRA_DATA) elData.style.display = "none";
+  const due = (n) => String(n).padStart(2, "0");
+
+  function aggiorna() {
+    const d = new Date();
+    let h = d.getHours();
+    let suffisso = "";
+    if (!FORMATO_24H) { suffisso = h < 12 ? " AM" : " PM"; h = h % 12 || 12; }
+    const sep = SEPARATORE_LAMPEGGIANTE ? '<span class="sep">:</span>' : ":";
+    elOra.innerHTML = `${due(h)}${sep}${due(d.getMinutes())}` +
+      (MOSTRA_SECONDI ? `<span class="sec">${due(d.getSeconds())}</span>` : "") +
+      (suffisso ? `<span class="sec">${suffisso}</span>` : "");
+    if (MOSTRA_DATA) {
+      elData.textContent = d.toLocaleDateString("it-IT",
+        { weekday: "long", day: "numeric", month: "long", year: "numeric" });
+    }
+    // si riallinea esattamente all'inizio di ogni secondo
+    setTimeout(aggiorna, 1000 - (Date.now() % 1000));
+  }
+  aggiorna();
+</script>
+</body>
+</html>

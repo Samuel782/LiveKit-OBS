@@ -1,0 +1,225 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<title>Lower Third</title>
+<!--
+  LOWER THIRD ANIMATA PER OBS (Fonte Browser, nessun plugin)
+
+  Personalizza tramite URL (in OBS: Fonte Browser > deseleziona "File locale" e
+  incolla l'indirizzo file:// con i parametri), oppure modifica i valori
+  di DEFAULTS qui sotto.
+
+  Parametri:
+    name     = Nome            (es. Mario%20Rossi)
+    role     = Ruolo           (es. Regista)
+    color    = Colore accento  (esadecimale senza #, es. e63946)
+    bg       = Colore fondo    (es. 111111)
+    text     = Colore testo    (es. ffffff)
+    side     = left | right
+    duration = secondi visibile prima di uscire (0 = resta sempre)
+    loop     = secondi di pausa prima di rientrare (0 = niente loop)
+    autoplay = 1 per farla entrare da sola all'apertura (predefinito: aspetta il pannello)
+
+  Comando dal vivo: apri lower-third-control.html come dock personalizzato in OBS.
+
+  Esempio:
+    file:///Users/TUO_UTENTE/Desktop/LWT/lower-third.html?name=Mario%20Rossi&role=Regista&color=e63946&duration=8
+-->
+<style>
+  :root {
+    --accent: #e63946;
+    --bg: rgba(17, 17, 17, 0.92);
+    --text: #ffffff;
+    --font: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  }
+  html, body {
+    margin: 0;
+    width: 1920px;
+    height: 1080px;
+    overflow: hidden;
+    background: transparent;
+    font-family: var(--font);
+  }
+
+  .lt {
+    position: absolute;
+    bottom: 110px;
+    left: 120px;
+    display: flex;
+    align-items: stretch;
+  }
+  .lt.right { left: auto; right: 120px; flex-direction: row-reverse; }
+
+  /* Barra verticale d'accento */
+  .bar {
+    width: 12px;
+    background: var(--accent);
+    transform: scaleY(0);
+    transform-origin: bottom;
+  }
+
+  .box {
+    overflow: hidden;
+    clip-path: inset(0 100% 0 0);
+  }
+  .right .box { clip-path: inset(0 0 0 100%); }
+
+  .name {
+    background: var(--bg);
+    color: var(--text);
+    font-size: 56px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    padding: 18px 40px 14px 32px;
+    white-space: nowrap;
+    transform: translateX(-30px);
+    opacity: 0;
+  }
+  .role {
+    display: inline-block;
+    background: var(--accent);
+    color: var(--text);
+    font-size: 30px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    padding: 10px 32px;
+    white-space: nowrap;
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+  .role:empty { display: none; }
+  .right .name, .right .role-wrap { text-align: right; }
+  .role-wrap { overflow: hidden; }
+
+  /* ---------- ENTRATA ---------- */
+  .in .bar  { animation: barIn .45s cubic-bezier(.2,.8,.2,1) forwards; }
+  .in .box  { animation: boxIn .7s cubic-bezier(.7,0,.2,1) .25s forwards; }
+  .in .name { animation: textIn .6s cubic-bezier(.2,.8,.2,1) .55s forwards; }
+  .in .role { animation: roleIn .5s cubic-bezier(.2,.8,.2,1) .8s forwards; }
+
+  /* ---------- USCITA ---------- */
+  .out .role { animation: roleOut .35s ease-in forwards; transform: none; opacity: 1; }
+  .out .name { animation: textOut .4s ease-in .1s forwards; transform: none; opacity: 1; }
+  .out .box  { animation: boxOut .55s cubic-bezier(.7,0,.3,1) .3s forwards; clip-path: inset(0 0 0 0); }
+  .out .bar  { animation: barOut .4s ease-in .75s forwards; transform: scaleY(1); }
+
+  @keyframes barIn   { to { transform: scaleY(1); } }
+  @keyframes barOut  { to { transform: scaleY(0); } }
+  @keyframes boxIn   { to { clip-path: inset(0 0 0 0); } }
+  @keyframes boxOut  { to { clip-path: inset(0 100% 0 0); } }
+  @keyframes textIn  { to { transform: translateX(0); opacity: 1; } }
+  @keyframes textOut { to { transform: translateX(-30px); opacity: 0; } }
+  @keyframes roleIn  { to { transform: translateY(0); opacity: 1; } }
+  @keyframes roleOut { to { transform: translateY(-100%); opacity: 0; } }
+
+  .right.out .box { animation-name: boxOutR; }
+  @keyframes boxOutR { to { clip-path: inset(0 0 0 100%); } }
+</style>
+</head>
+<body>
+  <div class="lt" id="lt">
+    <div class="bar"></div>
+    <div class="box">
+      <div class="name" id="name"></div>
+      <div class="role-wrap"><div class="role" id="role"></div></div>
+    </div>
+  </div>
+
+<script src="lt-config.js"></script>
+<script src="lt-obs.js"></script>
+<script>
+  // Valori predefiniti: modificali qui se non vuoi usare i parametri URL
+  const DEFAULTS = {
+    name: "Mario Rossi",
+    role: "Regista",
+    color: "e63946",
+    bg: "111111",
+    text: "ffffff",
+    side: "left",
+    duration: 0,   // 0 = resta visibile
+    loop: 0,       // 0 = nessun loop
+    autoplay: false // true = entra da sola all'apertura; false = aspetta il pannello
+  };
+
+  const p = new URLSearchParams(location.search);
+  const get = (k) => p.get(k) ?? DEFAULTS[k];
+
+  const hex = (v) => "#" + String(v).replace(/^#/, "");
+  const root = document.documentElement.style;
+  root.setProperty("--accent", hex(get("color")));
+  root.setProperty("--bg", hex(get("bg")) + "eb");
+  root.setProperty("--text", hex(get("text")));
+
+  document.getElementById("name").textContent = get("name");
+  document.getElementById("role").textContent = get("role");
+
+  const lt = document.getElementById("lt");
+  if (get("side") === "right") lt.classList.add("right");
+
+  let duration = parseFloat(get("duration")) || 0;
+  const loop = parseFloat(get("loop")) || 0;
+  const autoplay = String(get("autoplay")) !== "0" && get("autoplay") !== false;
+  const IN_TIME = 1300, OUT_TIME = 1150;
+
+  let visible = false, timer = null;
+  const later = (fn, ms) => { clearTimeout(timer); timer = setTimeout(fn, ms); };
+
+  function play() {
+    lt.classList.remove("out");
+    void lt.offsetWidth;            // riavvia le animazioni
+    lt.classList.add("in");
+    visible = true;
+    if (duration > 0) later(hide, IN_TIME + duration * 1000); else clearTimeout(timer);
+  }
+  function hide() {
+    if (!visible) return;
+    lt.classList.remove("in");
+    void lt.offsetWidth;
+    lt.classList.add("out");
+    visible = false;
+    if (loop > 0) later(play, OUT_TIME + loop * 1000); else clearTimeout(timer);
+  }
+
+  function apply(d) {
+    if (d.name != null) document.getElementById("name").textContent = d.name;
+    if (d.role != null) document.getElementById("role").textContent = d.role;
+    if (d.color) root.setProperty("--accent", hex(d.color));
+    if (d.side) lt.classList.toggle("right", d.side === "right");
+    if (d.duration != null) duration = parseFloat(d.duration) || 0;
+  }
+
+  // Comando "show": se è già visibile esce, cambia il testo e rientra
+  function show(d) {
+    if (visible) {
+      hide();
+      later(() => { apply(d); play(); }, OUT_TIME + 150);
+    } else {
+      apply(d);
+      play();
+    }
+  }
+
+  // OBS: quando la fonte diventa visibile/invisibile (se disponibile)
+  window.addEventListener("obsSourceVisibleChanged", (e) => {
+    if (e.detail.visible) play(); else hide();
+  });
+
+  // Comandi dal pannello di controllo
+  if (window.ltConnect) {
+    const link = ltConnect({
+      onCommand(d) {
+        if (d.target && d.target !== (p.get("id") || "")) return;
+        if (d.action === "show") show(d);
+        else if (d.action === "hide") hide();
+        else if (d.action === "who") link.send({ action: "source-here" });
+      },
+      onStatus(s) { if (s === "ok") link.send({ action: "source-here" }); }
+    });
+  }
+
+  if (autoplay) play();
+</script>
+</body>
+</html>

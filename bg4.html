@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            background: transparent; /* Trasparente, così si fonde con OBS */
+            width: 100vw;
+            height: 100vh;
+        }
+        .blob {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(40px);
+            opacity: 0.7;
+            animation: barMove 12s infinite alternate ease-in-out;
+        }
+        #b1 { 
+            width: 600px; height: 250px; 
+            background: #1e3a8a; 
+            bottom: 20px; left: 10%; 
+        }
+        #b2 { 
+            width: 700px; height: 250px; 
+            background: #047857; 
+            bottom: 20px; right: 10%; 
+            animation-duration: 16s;
+        }
+        @keyframes barMove {
+            0% { transform: translateY(0) scaleX(1); }
+            100% { transform: translateY(-30px) scaleX(1.2); }
+        }
+    </style>
+</head>
+<body>
+    <div class="blob" id="b1"></div>
+    <div class="blob" id="b2"></div>
+</body>
+</html>

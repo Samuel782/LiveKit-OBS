@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            background: #030712;
+            width: 100vw;
+            height: 100vh;
+        }
+        .blob {
+            position: absolute;
+            border-radius: 50%;
+            mix-blend-mode: screen;
+            animation: aurora 16s infinite alternate ease-in-out;
+        }
+        #b1 { 
+            width: 90vw; height: 90vw; 
+            background: radial-gradient(circle, rgba(14, 116, 144, 0.5) 0%, rgba(14, 116, 144, 0) 70%);
+            top: -30%; left: -20%; 
+        }
+        #b2 { 
+            width: 80vw; height: 80vw; 
+            background: radial-gradient(circle, rgba(5, 150, 105, 0.45) 0%, rgba(5, 150, 105, 0) 70%);
+            bottom: -30%; right: -20%; 
+            animation-duration: 22s;
+        }
+        #b3 { 
+            width: 65vw; height: 65vw; 
+            background: radial-gradient(circle, rgba(52, 211, 153, 0.35) 0%, rgba(52, 211, 153, 0) 70%);
+            top: 10%; left: 30%; 
+            animation-duration: 12s; 
+        }
+        @keyframes aurora {
+            0% { transform: translate(0, 0) scale(1); }
+            50% { transform: translate(15%, -10%) scale(1.15); }
+            100% { transform: translate(-10%, 15%) scale(0.9); }
+        }
+    </style>
+</head>
+<body>
+    <div class="blob" id="b1"></div>
+    <div class="blob" id="b2"></div>
+    <div class="blob" id="b3"></div>
+</body>
+</html>

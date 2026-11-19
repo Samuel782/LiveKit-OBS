@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<title>Transizione OBS HTML</title>
+<style>
+  :root {
+    --colore1: rgba(29, 78, 216);   /* Blu */
+    --colore2: rgba(16, 185, 129);  /* Verde */
+  }
+
+  html, body {
+    margin: 0; width: 100vw; height: 100vh; overflow: hidden;
+    background: transparent;
+  }
+
+  .pannello {
+    position: absolute; 
+    top: -20%; 
+    height: 140%; 
+    width: 160%;
+    left: -160%; 
+    transform: skewX(-15deg);
+  }
+  .p1 { background: var(--colore2); }
+  .p2 { background: var(--colore1); }
+
+  /* Stato iniziale: nascosti a sinistra */
+  #scena {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    left: 0;
+    top: 0;
+  }
+
+  /* Quando la classe .attivo viene richiamata dall'evento di OBS, partono le animazioni */
+  .attivo .p1 { 
+    animation: entraUscita 1.2s cubic-bezier(.7,0,.3,1) forwards; 
+  }
+  .attivo .p2 { 
+    animation: entraUscita 1.2s cubic-bezier(.7,0,.3,1) forwards; 
+    animation-delay: 80ms; /* Piccolo sfasamento per dare profondità */
+  }
+
+  @keyframes entraUscita {
+    0%   { left: -160%; }
+    50%  { left: -30%; }  /* A metà animazione lo schermo è completamente coperto */
+    100% { left: 110%; }  /* Esce dallo schermo a destra */
+  }
+</style>
+</head>
+<body>
+  <div id="scena">
+    <div class="pannello p1"></div>
+    <div class="pannello p2"></div>
+  </div>
+
+<script>
+  const scena = document.getElementById("scena");
+
+  // 1. Quando OBS fa partire la transizione
+  window.addEventListener('transitionStart', function(event) {
+    scena.classList.add("attivo");
+  });
+
+  // 2. Quando OBS finisce la transizione (pulisce lo stato)
+  window.addEventListener('transitionStop', function(event) {
+    scena.classList.remove("attivo");
+  });
+
+  // Test locale nel browser del PC (se apri il file cliccandoci doppio)
+  if (!window.obsstudio) {
+    document.body.style.background = "#111";
+    window.addEventListener('click', () => {
+      scena.classList.add("attivo");
+      setTimeout(() => scena.classList.remove("attivo"), 1200);
+    });
+  }
+</script>
+</body>
+</html>
