@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<title>Onde luminose</title>
+<style>
+  html, body { margin: 0; width: 100vw; height: 100vh; overflow: hidden;
+    background: radial-gradient(ellipse at 50% 120%, #0b2545 0%, #040914 60%); }
+  canvas { display: block; width: 100vw; height: 100vh; }
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<script>
+  /* ====== PERSONALIZZA QUI (o via URL: ?colori=1d4ed8,06b6d4,10b981&velocita=1) ====== */
+  const Q = new URLSearchParams(location.search);
+  const COLORI = (Q.get("colori") || "1d4ed8,06b6d4,10b981,3b82f6,34d399").split(",").map(c => "#" + c);
+  const VELOCITA = +(Q.get("velocita") || 1);
+  const ALTEZZA = +(Q.get("altezza") || 0.62);   // posizione verticale delle onde (0-1)
+  /* =================================================================================== */
+
+  const cv = document.getElementById("c"), ctx = cv.getContext("2d");
+  let W, H;
+  const size = () => { W = cv.width = innerWidth * devicePixelRatio; H = cv.height = innerHeight * devicePixelRatio; };
+  size(); addEventListener("resize", size);
+
+  const onde = COLORI.map((c, i) => ({
+    c, amp: 0.05 + i * 0.018, freq: 1.2 + i * 0.35, fase: i * 1.7, vel: 0.25 + i * 0.07, spessore: 2 + (i % 2) * 1.5
+  }));
+
+  function frame(t) {
+    t = t / 1000 * VELOCITA;
+    ctx.clearRect(0, 0, W, H);
+    ctx.globalCompositeOperation = "lighter";
+    for (const o of onde) {
+      // area sfumata sotto l'onda
+      const grad = ctx.createLinearGradient(0, H * ALTEZZA - H * o.amp, 0, H);
+      grad.addColorStop(0, o.c + "33"); grad.addColorStop(1, o.c + "00");
+      ctx.beginPath();
+      for (let x = 0; x <= W; x += 6) {
+        const u = x / W;
+        const y = H * ALTEZZA
+          + Math.sin(u * Math.PI * o.freq + t * o.vel + o.fase) * H * o.amp
+          + Math.sin(u * Math.PI * o.freq * 2.3 - t * o.vel * .7) * H * o.amp * .3;
+        x === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+      }
+      ctx.strokeStyle = o.c; ctx.lineWidth = o.spessore * devicePixelRatio;
+      ctx.shadowColor = o.c; ctx.shadowBlur = 25;
+      ctx.stroke();
+      ctx.shadowBlur = 0;
+      ctx.lineTo(W, H); ctx.lineTo(0, H); ctx.closePath();
+      ctx.fillStyle = grad; ctx.fill();
+    }
+    ctx.globalCompositeOperation = "source-over";
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+</script>
+</body>
+</html>

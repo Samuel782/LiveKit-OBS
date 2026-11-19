@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<title>Costellazione di particelle</title>
+<style>
+  html, body { margin: 0; width: 100vw; height: 100vh; overflow: hidden; background: #040914; }
+  canvas { display: block; width: 100vw; height: 100vh; }
+  .alone {
+    position: fixed; inset: 0; pointer-events: none;
+    background:
+      radial-gradient(circle at 15% 20%, rgba(29,78,216,.35), transparent 45%),
+      radial-gradient(circle at 85% 85%, rgba(16,185,129,.28), transparent 45%);
+  }
+</style>
+</head>
+<body>
+<div class="alone"></div>
+<canvas id="c"></canvas>
+<script>
+  /* ====== PERSONALIZZA QUI (o via URL: ?c1=60a5fa&c2=34d399&numero=110&distanza=170) ====== */
+  const Q = new URLSearchParams(location.search);
+  const C1 = "#" + (Q.get("c1") || "60a5fa");   // colore particelle A
+  const C2 = "#" + (Q.get("c2") || "34d399");   // colore particelle B
+  const NUMERO = +(Q.get("numero") || 110);     // quante particelle
+  const DISTANZA = +(Q.get("distanza") || 170); // distanza massima per le linee
+  const VELOCITA = +(Q.get("velocita") || 0.25);
+  /* ========================================================================================= */
+
+  const cv = document.getElementById("c"), ctx = cv.getContext("2d");
+  let W, H, pts = [];
+  function size() {
+    W = cv.width = innerWidth * devicePixelRatio;
+    H = cv.height = innerHeight * devicePixelRatio;
+  }
+  size(); addEventListener("resize", size);
+
+  // generatore pseudo-casuale fisso: la disposizione è sempre la stessa
+  let seed = 7; const rnd = () => ((seed = (seed * 16807) % 2147483647) / 2147483647);
+  for (let i = 0; i < NUMERO; i++) pts.push({
+    x: rnd() * W, y: rnd() * H,
+    vx: (rnd() - .5) * VELOCITA * devicePixelRatio * 2,
+    vy: (rnd() - .5) * VELOCITA * devicePixelRatio * 2,
+    r: (1 + rnd() * 2.2) * devicePixelRatio,
+    c: rnd() < .5 ? C1 : C2
+  });
+
+  function frame() {
+    ctx.clearRect(0, 0, W, H);
+    const D = DISTANZA * devicePixelRatio;
+    for (const p of pts) {
+      p.x += p.vx; p.y += p.vy;
+      if (p.x < 0 || p.x > W) p.vx *= -1;
+      if (p.y < 0 || p.y > H) p.vy *= -1;
+    }
+    ctx.lineWidth = devicePixelRatio;
+    for (let i = 0; i < pts.length; i++) {
+      for (let j = i + 1; j < pts.length; j++) {
+        const a = pts[i], b = pts[j], dx = a.x - b.x, dy = a.y - b.y, d = Math.hypot(dx, dy);
+        if (d < D) {
+          ctx.globalAlpha = (1 - d / D) * .45;
+          ctx.strokeStyle = a.c;
+          ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke();
+        }
+      }
+    }
+    ctx.globalAlpha = 1;
+    for (const p of pts) {
+      ctx.fillStyle = p.c; ctx.shadowColor = p.c; ctx.shadowBlur = 12;
+      ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2); ctx.fill();
+    }
+    ctx.shadowBlur = 0;
+    requestAnimationFrame(frame);
+  }
+  frame();
+</script>
+</body>
+</html>

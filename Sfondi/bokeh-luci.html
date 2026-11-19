@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<title>Luci bokeh</title>
+<style>
+  html, body { margin: 0; width: 100vw; height: 100vh; overflow: hidden;
+    background: linear-gradient(160deg, #061229 0%, #040914 55%, #03140f 100%); }
+  .luce {
+    position: absolute; border-radius: 50%;
+    mix-blend-mode: screen;
+    animation: sali linear infinite;
+  }
+  @keyframes sali {
+    0%   { transform: translate(0, 0) scale(.9); opacity: 0; }
+    15%  { opacity: var(--o); }
+    85%  { opacity: var(--o); }
+    100% { transform: translate(var(--dx), -40vh) scale(1.1); opacity: 0; }
+  }
+</style>
+</head>
+<body>
+<script>
+  /* ====== PERSONALIZZA QUI (o via URL: ?numero=45&colori=3b82f6,10b981,06b6d4) ====== */
+  const Q = new URLSearchParams(location.search);
+  const NUMERO = +(Q.get("numero") || 45);
+  const COLORI = (Q.get("colori") || "3b82f6,10b981,06b6d4,60a5fa,34d399").split(",");
+  /* ================================================================================== */
+  let seed = 11; const rnd = () => ((seed = (seed * 16807) % 2147483647) / 2147483647);
+  const hexRgb = (h) => [0, 2, 4].map(i => parseInt(h.substr(i, 2), 16)).join(",");
+  for (let i = 0; i < NUMERO; i++) {
+    const d = document.createElement("div"), s = 40 + rnd() * 220, c = hexRgb(COLORI[i % COLORI.length]);
+    const sfocata = rnd() < .5;
+    d.className = "luce";
+    Object.assign(d.style, {
+      width: s + "px", height: s + "px",
+      left: (rnd() * 105 - 5) + "vw", top: (rnd() * 110) + "vh",
+      background: sfocata
+        ? `radial-gradient(circle, rgba(${c},.55) 0%, rgba(${c},0) 70%)`
+        : `radial-gradient(circle, rgba(${c},.28) 0%, rgba(${c},.22) 60%, rgba(${c},.45) 68%, rgba(${c},0) 72%)`,
+      animationDuration: (18 + rnd() * 22) + "s",
+      animationDelay: (-rnd() * 40) + "s",
+    });
+    d.style.setProperty("--o", (.35 + rnd() * .5).toFixed(2));
+    d.style.setProperty("--dx", ((rnd() - .5) * 20) + "vw");
+    document.body.appendChild(d);
+  }
+</script>
+</body>
+</html>

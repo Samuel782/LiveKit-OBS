@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<title>Grana e vignetta</title>
+<!--
+  Effetto "cinema": grana della pellicola animata + vignettatura ai bordi.
+  Mettilo in cima a tutte le fonti, 1920x1080.
+  Parametri URL: grana=0.10 (intensità 0-1)   vignetta=0.6 (0-1)
+-->
+<style>
+  html, body { margin: 0; width: 100vw; height: 100vh; overflow: hidden; background: transparent; }
+  .vignetta { position: absolute; inset: 0;
+    background: radial-gradient(ellipse at center, transparent 50%, rgba(0,0,0,var(--v, .6)) 100%); }
+  canvas { position: absolute; inset: 0; width: 100%; height: 100%; mix-blend-mode: overlay; opacity: var(--g, .1); }
+</style>
+</head>
+<body>
+  <canvas id="c"></canvas>
+  <div class="vignetta"></div>
+<script>
+  const Q = new URLSearchParams(location.search), r = document.documentElement.style;
+  if (Q.get("grana")) r.setProperty("--g", Q.get("grana"));
+  if (Q.get("vignetta")) r.setProperty("--v", Q.get("vignetta"));
+  // genera 6 fotogrammi di rumore a bassa risoluzione e li alterna (leggero per la CPU)
+  const cv = document.getElementById("c"), ctx = cv.getContext("2d");
+  cv.width = 480; cv.height = 270;
+  const frames = Array.from({ length: 6 }, () => {
+    const img = ctx.createImageData(cv.width, cv.height);
+    for (let i = 0; i < img.data.length; i += 4) {
+      const v = Math.random() * 255; img.data[i] = img.data[i + 1] = img.data[i + 2] = v; img.data[i + 3] = 255;
+    }
+    return img;
+  });
+  let k = 0;
+  setInterval(() => ctx.putImageData(frames[k++ % frames.length], 0, 0), 1000 / 24);
+</script>
+</body>
+</html>

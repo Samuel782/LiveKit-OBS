@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<title>Testo scorrevole</title>
+<!--
+  Barra news con testo che scorre (ticker). Consigliato: Fonte Browser 1920x80, in fondo allo schermo.
+  Parametri URL:
+    etichetta=ULTIME
+    testo=Prima%20notizia|Seconda%20notizia|Terza%20notizia     (separa con | )
+    velocita=120     pixel al secondo
+-->
+<style>
+  html, body { margin: 0; background: transparent; overflow: hidden;
+    font-family: "SF Pro Display", "Helvetica Neue", "Segoe UI", Arial, sans-serif; }
+  .barra { position: fixed; left: 0; right: 0; bottom: 0; height: 100vh; display: flex; align-items: stretch;
+    background: rgba(4,9,20,.88); border-top: 2px solid; border-image: linear-gradient(90deg, #1d4ed8, #06b6d4, #10b981) 1;
+    animation: sale .7s cubic-bezier(.2,.8,.2,1) both; }
+  .etichetta { position: relative; z-index: 2; display: flex; align-items: center; padding: 0 1.4em 0 1.2em;
+    background: linear-gradient(135deg, #1d4ed8, #10b981); color: #fff; font-weight: 800; letter-spacing: .15em; font-size: 42vh;
+    clip-path: polygon(0 0, 100% 0, calc(100% - .6em) 100%, 0 100%); }
+  .scorre { position: relative; flex: 1; overflow: hidden; display: flex; align-items: center;
+    -webkit-mask-image: linear-gradient(90deg, transparent, #000 4%, #000 96%, transparent); mask-image: linear-gradient(90deg, transparent, #000 4%, #000 96%, transparent); }
+  .nastro { display: flex; white-space: nowrap; will-change: transform; }
+  .nastro span { color: #fff; font-size: 40vh; font-weight: 500; padding-right: 1.2em; }
+  .nastro span::after { content: "◆"; color: #10b981; font-size: .5em; margin-left: 1.2em; vertical-align: middle; }
+  @keyframes sale { from { transform: translateY(100%); } }
+</style>
+</head>
+<body>
+  <div class="barra">
+    <div class="etichetta" id="etichetta">ULTIME</div>
+    <div class="scorre"><div class="nastro" id="nastro"></div></div>
+  </div>
+<script>
+  /* ====== PERSONALIZZA QUI (o via URL) ====== */
+  const Q = new URLSearchParams(location.search);
+  const ETICHETTA = Q.get("etichetta") ?? "ULTIME";
+  const TESTI = (Q.get("testo") || "Benvenuti in diretta!|Iscriviti al canale per non perdere le prossime dirette|Scrivi le tue domande in chat").split("|");
+  const VELOCITA = +(Q.get("velocita") || 120);
+  /* ========================================== */
+  const et = document.getElementById("etichetta");
+  if (ETICHETTA) et.textContent = ETICHETTA; else et.remove();
+  const nastro = document.getElementById("nastro");
+  const blocco = () => TESTI.map(t => { const s = document.createElement("span"); s.textContent = t; return s; });
+  blocco().forEach(s => nastro.appendChild(s));
+  // ripete il contenuto finché copre almeno due volte la larghezza, per un loop senza stacchi
+  const larghezza = nastro.scrollWidth;
+  const copie = Math.max(2, Math.ceil((innerWidth * 2) / larghezza));
+  for (let i = 1; i < copie; i++) blocco().forEach(s => nastro.appendChild(s));
+  let x = 0, prec = performance.now();
+  (function anima(t) {
+    x -= (t - prec) / 1000 * VELOCITA; prec = t;
+    if (-x >= larghezza) x += larghezza;
+    nastro.style.transform = `translateX(${x}px)`;
+    requestAnimationFrame(anima);
+  })(prec);
+</script>
+</body>
+</html>

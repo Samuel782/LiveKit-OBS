@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<title>Cornice webcam</title>
+<!--
+  Cornice animata con bordo sfumato che ruota, interno trasparente.
+  Mettila sopra la webcam e dalle le stesse dimensioni (es. Fonte Browser 640x360).
+  Parametri URL:
+    nome=Mario%20Rossi   etichetta in basso (vuoto = nessuna)
+    raggio=28            arrotondamento angoli (px)
+    spessore=6           spessore bordo (px)
+-->
+<style>
+  :root { --raggio: 28px; --spessore: 6px; }
+  html, body { margin: 0; background: transparent; overflow: hidden; width: 100vw; height: 100vh;
+    font-family: "SF Pro Display", "Helvetica Neue", "Segoe UI", Arial, sans-serif; }
+  .cornice { position: absolute; inset: 0; border-radius: var(--raggio); overflow: hidden;
+    /* lascia visibile solo il bordo */
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor; mask-composite: exclude; padding: var(--spessore); }
+  .cornice::before { content: ""; position: absolute; left: 50%; top: 50%; width: 200vmax; height: 200vmax; margin: -100vmax 0 0 -100vmax;
+    background: conic-gradient(#1d4ed8, #06b6d4, #10b981, #34d399, #06b6d4, #1d4ed8);
+    animation: gira 6s linear infinite; }
+  .bagliore { position: absolute; inset: 0; border-radius: var(--raggio); box-shadow: inset 0 0 25px rgba(6,182,212,.35); pointer-events: none; }
+  .nome { position: absolute; left: calc(var(--spessore) + 16px); bottom: calc(var(--spessore) + 16px);
+    padding: 8px 18px; border-radius: 10px; background: rgba(4,9,20,.82); color: #fff; font-size: 26px; font-weight: 700;
+    border-left: 5px solid #10b981; }
+  .nome:empty { display: none; }
+  @keyframes gira { to { transform: rotate(360deg); } }
+</style>
+</head>
+<body>
+  <div class="cornice"></div>
+  <div class="bagliore"></div>
+  <div class="nome" id="nome"></div>
+<script>
+  const Q = new URLSearchParams(location.search), r = document.documentElement.style;
+  document.getElementById("nome").textContent = Q.get("nome") ?? "";
+  if (Q.get("raggio")) r.setProperty("--raggio", Q.get("raggio") + "px");
+  if (Q.get("spessore")) r.setProperty("--spessore", Q.get("spessore") + "px");
+</script>
+</body>
+</html>

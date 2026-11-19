@@ -69,8 +69,15 @@
     scena.classList.remove("attivo");
   });
 
+  // Anteprima statica (usata per le immagini del README): ?anteprima=1
+  if (new URLSearchParams(location.search).get("anteprima")) {
+    scena.classList.add("attivo");
+    document.querySelectorAll(".pannello").forEach(p => {
+      p.style.animationPlayState = "paused"; p.style.animationDelay = "-0.27s";
+    });
+  }
   // Test locale nel browser del PC (se apri il file cliccandoci doppio)
-  if (!window.obsstudio) {
+  else if (!window.obsstudio) {
     document.body.style.background = "#111";
     window.addEventListener('click', () => {
       scena.classList.add("attivo");

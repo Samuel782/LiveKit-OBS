@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<title>Conto alla rovescia</title>
+<!--
+  Timer con anello di avanzamento, sfondo trasparente.
+  Consigliato: Fonte Browser 500x500.
+  Parametri URL:
+    minuti=10        durata (predefinito 10)
+    ora=21:00        oppure conta fino a un orario
+    etichetta=Q%26A  testo sotto il numero
+  In OBS: tasto destro sulla fonte > Interagisci, poi clic = pausa/riprendi, doppio clic = ricomincia.
+-->
+<style>
+  html, body { margin: 0; background: transparent; overflow: hidden;
+    font-family: "SF Pro Display", "Helvetica Neue", "Segoe UI", Arial, sans-serif; color: #fff; }
+  body { display: grid; place-items: center; height: 100vh; user-select: none; }
+  .wrap { position: relative; width: 90vmin; height: 90vmin; }
+  svg { width: 100%; height: 100%; transform: rotate(-90deg); overflow: visible; }
+  .fondo { fill: rgba(4,9,20,.75); stroke: rgba(255,255,255,.1); stroke-width: 6; }
+  .arco { fill: none; stroke: url(#g); stroke-width: 6; stroke-linecap: round; filter: drop-shadow(0 0 6px rgba(16,185,129,.8));
+    transition: stroke-dashoffset .3s linear; }
+  .testo { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+  .num { font-size: 20vmin; font-weight: 800; font-variant-numeric: tabular-nums; letter-spacing: -.02em; line-height: 1; }
+  .etichetta { font-size: 5vmin; letter-spacing: .3em; text-transform: uppercase; color: rgba(255,255,255,.65); margin-top: 3vmin; padding-left: .3em; }
+  .etichetta:empty { display: none; }
+  .pausa .num { opacity: .5; }
+  .finito .num { color: #6ee7b7; animation: lampo 1s steps(2) infinite; }
+  @keyframes lampo { 50% { opacity: .3; } }
+</style>
+</head>
+<body>
+  <div class="wrap" id="wrap">
+    <svg viewBox="0 0 100 100">
+      <defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#3b82f6"/><stop offset=".5" stop-color="#06b6d4"/><stop offset="1" stop-color="#10b981"/></linearGradient></defs>
+      <circle class="fondo" cx="50" cy="50" r="46"/>
+      <circle class="arco" id="arco" cx="50" cy="50" r="46"/>
+    </svg>
+    <div class="testo"><div class="num" id="num">10:00</div><div class="etichetta" id="etichetta"></div></div>
+  </div>
+<script>
+  const Q = new URLSearchParams(location.search);
+  document.getElementById("etichetta").textContent = Q.get("etichetta") ?? "";
+  let totale = parseFloat(Q.get("minuti") || 10) * 60000;
+  if (Q.get("ora")) {
+    const [h, m] = Q.get("ora").split(":").map(Number), d = new Date();
+    d.setHours(h, m || 0, 0, 0); if (d < new Date()) d.setDate(d.getDate() + 1);
+    totale = d - Date.now();
+  }
+  const C = 2 * Math.PI * 46, arco = document.getElementById("arco"), num = document.getElementById("num"), wrap = document.getElementById("wrap");
+  arco.style.strokeDasharray = C;
+  let fine = Date.now() + totale, restoInPausa = null;
+  const due = (n) => String(n).padStart(2, "0");
+
+  function tick() {
+    const resto = restoInPausa ?? Math.max(0, fine - Date.now());
+    const s = Math.ceil(resto / 1000);
+    num.textContent = s >= 3600 ? `${Math.floor(s / 3600)}:${due(Math.floor(s % 3600 / 60))}:${due(s % 60)}` : `${due(Math.floor(s / 60))}:${due(s % 60)}`;
+    arco.style.strokeDashoffset = C * (1 - resto / totale);
+    wrap.classList.toggle("finito", s === 0);
+    wrap.classList.toggle("pausa", restoInPausa !== null);
+  }
+  setInterval(tick, 200); tick();
+
+  addEventListener("click", () => {
+    if (restoInPausa === null) restoInPausa = Math.max(0, fine - Date.now());
+    else { fine = Date.now() + restoInPausa; restoInPausa = null; }
+    tick();
+  });
+  addEventListener("dblclick", () => { fine = Date.now() + totale; restoInPausa = null; tick(); });
+</script>
+</body>
+</html>

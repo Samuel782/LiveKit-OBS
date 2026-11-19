@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<title>Gradiente fluido</title>
+<style>
+  /* ====== PERSONALIZZA QUI ====== */
+  :root {
+    --a: #1d4ed8;   /* blu */
+    --b: #10b981;   /* verde */
+    --c: #06b6d4;   /* ciano */
+    --d: #0f172a;   /* blu notte */
+    --durata: 30s;  /* più alto = più lento */
+  }
+  /* ============================== */
+  html, body { margin: 0; width: 100vw; height: 100vh; overflow: hidden; background: var(--d); }
+  .strato {
+    position: absolute; left: 50%; top: 50%;
+    width: 180vmax; height: 180vmax; margin: -90vmax 0 0 -90vmax;
+    background: conic-gradient(from 0deg, var(--a), var(--c), var(--b), var(--d), var(--a));
+    filter: blur(140px);
+    animation: gira var(--durata) linear infinite;
+    opacity: .85;
+  }
+  /* centri spostati: così i due vortici non coincidono e non si vede il "punto" centrale */
+  .strato.uno { left: 30%; top: 40%; }
+  .strato.due { left: 70%; top: 60%; }
+  .strato.due {
+    background: conic-gradient(from 180deg, var(--b), var(--d), var(--a), var(--c), var(--b));
+    animation-duration: calc(var(--durata) * 1.6);
+    animation-direction: reverse;
+    mix-blend-mode: overlay; opacity: .7;
+  }
+  .velo { position: absolute; inset: 0; background: rgba(4, 9, 20, .45); }
+  .grana { position: absolute; inset: 0; opacity: .08; mix-blend-mode: overlay;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
+  @keyframes gira { to { transform: rotate(360deg); } }
+</style>
+</head>
+<body>
+  <div class="strato uno"></div>
+  <div class="strato due"></div>
+  <div class="velo"></div>
+  <div class="grana"></div>
+</body>
+</html>

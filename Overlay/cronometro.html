@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<title>Cronometro</title>
+<!--
+  Cronometro con decimi, sfondo trasparente. Consigliato: Fonte Browser 700x200.
+  In OBS: tasto destro sulla fonte > Interagisci.
+    clic = avvia / ferma    doppio clic = azzera    tasto L = giro
+  Parametri URL: avvio=1 (parte subito)  box=0 (senza riquadro)
+-->
+<style>
+  html, body { margin: 0; background: transparent; overflow: hidden;
+    font-family: "SF Pro Display", "Helvetica Neue", "Segoe UI", Arial, sans-serif; color: #fff; }
+  body { display: flex; align-items: center; justify-content: center; height: 100vh; user-select: none; }
+  .box { display: flex; align-items: center; gap: 22px; padding: 16px 34px; border-radius: 18px;
+    background: rgba(4,9,20,.8); border: 1px solid rgba(255,255,255,.12); box-shadow: 0 10px 40px rgba(0,0,0,.35); }
+  .nobox .box { background: none; border: 0; box-shadow: none; }
+  .stato { width: 18px; height: 18px; border-radius: 50%; background: #64748b; transition: background .3s; }
+  .va .stato { background: #10b981; box-shadow: 0 0 14px #10b981; }
+  .tempo { font-size: 96px; font-weight: 700; font-variant-numeric: tabular-nums; letter-spacing: .01em; line-height: 1;
+    text-shadow: 0 3px 12px rgba(0,0,0,.4); }
+  .dec { font-size: .5em; color: #6ee7b7; }
+  .giri { position: fixed; right: 12px; top: 8px; font-size: 18px; color: rgba(255,255,255,.7); text-align: right; font-variant-numeric: tabular-nums; }
+</style>
+</head>
+<body>
+  <div class="box"><span class="stato"></span><div class="tempo" id="t">00:00<span class="dec">.0</span></div></div>
+  <div class="giri" id="giri"></div>
+<script>
+  const Q = new URLSearchParams(location.search);
+  if (Q.get("box") === "0") document.body.classList.add("nobox");
+  let accumulato = 0, partenza = null, giri = [];
+  const due = (n) => String(n).padStart(2, "0");
+  const ora = () => accumulato + (partenza ? Date.now() - partenza : 0);
+  const fmt = (ms) => { const s = Math.floor(ms / 1000), h = Math.floor(s / 3600);
+    return (h ? h + ":" : "") + due(Math.floor(s % 3600 / 60)) + ":" + due(s % 60); };
+  const el = document.getElementById("t"), elG = document.getElementById("giri");
+  function disegna() {
+    const ms = ora();
+    el.innerHTML = `${fmt(ms)}<span class="dec">.${Math.floor(ms % 1000 / 100)}</span>`;
+    requestAnimationFrame(disegna);
+  }
+  function avviaFerma() {
+    if (partenza) { accumulato += Date.now() - partenza; partenza = null; } else partenza = Date.now();
+    document.body.classList.toggle("va", !!partenza);
+  }
+  addEventListener("click", avviaFerma);
+  addEventListener("dblclick", () => { accumulato = 0; partenza = null; giri = []; elG.innerHTML = ""; document.body.classList.remove("va"); });
+  addEventListener("keydown", (e) => {
+    if (e.key === " ") avviaFerma();
+    if (e.key.toLowerCase() === "l") { giri.unshift(fmt(ora())); elG.innerHTML = giri.slice(0, 4).map((g, i) => `Giro ${giri.length - i}: ${g}`).join("<br>"); }
+  });
+  if (Q.get("avvio") === "1") avviaFerma();
+  disegna();
+</script>
+</body>
+</html>

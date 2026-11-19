@@ -1,0 +1,3 @@
+.DS_Store
+# contiene la password del WebSocket di OBS
+Overlay/lower-third/lt-config.js

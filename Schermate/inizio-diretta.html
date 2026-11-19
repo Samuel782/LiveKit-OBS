@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<title>Inizio diretta</title>
+<!--
+  Schermata "La diretta inizia tra…" con conto alla rovescia.
+  Parametri URL (tutti facoltativi):
+    titolo=Nome%20della%20diretta
+    minuti=5          conto alla rovescia di N minuti dall'apertura della fonte
+    ora=21:00         oppure: conta fino a un orario preciso
+    fine=Si%20parte!  testo mostrato a zero
+-->
+<style>
+  :root { --blu: #1d4ed8; --verde: #10b981; --ciano: #06b6d4; --notte: #040914;
+          --font: "SF Pro Display", "Helvetica Neue", "Segoe UI", Arial, sans-serif; }
+  html, body { margin: 0; width: 100vw; height: 100vh; overflow: hidden; background: var(--notte);
+    font-family: var(--font); color: #fff; }
+
+  .blob { position: absolute; border-radius: 50%; mix-blend-mode: screen; animation: fluttua 16s infinite alternate ease-in-out; }
+  #b1 { width: 80vw; height: 80vw; top: -30%; left: -20%; background: radial-gradient(circle, rgba(29,78,216,.55), transparent 70%); }
+  #b2 { width: 80vw; height: 80vw; bottom: -35%; right: -20%; background: radial-gradient(circle, rgba(16,185,129,.45), transparent 70%); animation-duration: 21s; animation-direction: alternate-reverse; }
+  #b3 { width: 55vw; height: 55vw; top: 25%; left: 30%; background: radial-gradient(circle, rgba(6,182,212,.25), transparent 70%); animation-duration: 12s; }
+  @keyframes fluttua { 0% { transform: translate(-6%, -4%) scale(.95); } 100% { transform: translate(8%, 6%) scale(1.08); } }
+
+  .centro { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
+  .etichetta { font-size: 2.2vw; font-weight: 600; letter-spacing: .5em; text-transform: uppercase; color: rgba(255,255,255,.7);
+    padding-left: .5em; animation: appare 1s ease-out both; }
+  .timer { font-size: 15vw; font-weight: 800; line-height: 1; margin: 2vh 0 3vh; font-variant-numeric: tabular-nums; letter-spacing: -.02em;
+    background: linear-gradient(135deg, #fff 30%, #a7f3d0 100%); -webkit-background-clip: text; background-clip: text; color: transparent;
+    filter: drop-shadow(0 .05em .15em rgba(0,0,0,.35)); animation: appare 1s .15s ease-out both; }
+  .barra { width: 34vw; height: 6px; border-radius: 3px; background: rgba(255,255,255,.12); overflow: hidden; animation: appare 1s .3s ease-out both; }
+  .barra i { display: block; height: 100%; width: 0%; border-radius: 3px; background: linear-gradient(90deg, var(--blu), var(--ciano), var(--verde));
+    box-shadow: 0 0 18px rgba(16,185,129,.8); transition: width 1s linear; }
+  .titolo { margin-top: 5vh; font-size: 2.6vw; font-weight: 500; color: rgba(255,255,255,.9); animation: appare 1s .45s ease-out both; }
+  .titolo:empty { display: none; }
+  .zero { animation: battito 1.2s ease-in-out infinite; }
+  @keyframes appare { from { opacity: 0; transform: translateY(20px); } }
+  @keyframes battito { 50% { transform: scale(1.05); } }
+</style>
+</head>
+<body>
+  <div class="blob" id="b1"></div><div class="blob" id="b2"></div><div class="blob" id="b3"></div>
+  <div class="centro">
+    <div class="etichetta">La diretta inizia tra</div>
+    <div class="timer" id="timer">05:00</div>
+    <div class="barra"><i id="barra"></i></div>
+    <div class="titolo" id="titolo"></div>
+  </div>
+<script>
+  /* ====== PERSONALIZZA QUI (o via URL) ====== */
+  const Q = new URLSearchParams(location.search);
+  const TITOLO = Q.get("titolo") ?? "";
+  const MINUTI = parseFloat(Q.get("minuti") || 5);
+  const ORA = Q.get("ora");                         // es. "21:00"
+  const TESTO_FINE = Q.get("fine") || "Si parte!";
+  /* ========================================== */
+
+  document.getElementById("titolo").textContent = TITOLO;
+  const inizio = Date.now();
+  let fine = inizio + MINUTI * 60000;
+  if (ORA) {
+    const [h, m] = ORA.split(":").map(Number), d = new Date();
+    d.setHours(h, m || 0, 0, 0);
+    if (d < new Date()) d.setDate(d.getDate() + 1);
+    fine = d.getTime();
+  }
+  const totale = fine - inizio;
+  const due = (n) => String(n).padStart(2, "0");
+  const elT = document.getElementById("timer"), elB = document.getElementById("barra");
+
+  function aggiorna() {
+    const resto = Math.max(0, fine - Date.now());
+    const s = Math.ceil(resto / 1000);
+    if (s <= 0) {
+      elT.textContent = TESTO_FINE; elT.classList.add("zero");
+      elT.style.fontSize = "9vw"; elB.style.width = "100%";
+      return;
+    }
+    const h = Math.floor(s / 3600), m = Math.floor(s % 3600 / 60), sec = s % 60;
+    elT.textContent = (h ? h + ":" + due(m) : due(m)) + ":" + due(sec);
+    elB.style.width = (100 - resto / totale * 100).toFixed(2) + "%";
+    setTimeout(aggiorna, 1000 - (Date.now() % 1000) + 5);
+  }
+  aggiorna();
+</script>
+</body>
+</html>

@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<title>Barra obiettivo</title>
+<!--
+  Barra di avanzamento verso un obiettivo (iscritti, donazioni, like...).
+  Consigliato: Fonte Browser 900x160.
+  Parametri URL:
+    titolo=Obiettivo%20iscritti
+    valore=742       valore attuale
+    obiettivo=1000   traguardo
+    prefisso=€       (facoltativo, es. € per le donazioni)
+  Per aggiornare: modifica l'URL nella Fonte Browser, la barra si anima fino al nuovo valore.
+-->
+<style>
+  html, body { margin: 0; background: transparent; overflow: hidden;
+    font-family: "SF Pro Display", "Helvetica Neue", "Segoe UI", Arial, sans-serif; color: #fff; }
+  body { display: flex; align-items: center; justify-content: center; height: 100vh; }
+  .box { width: calc(100vw - 40px); padding: 18px 26px 22px; border-radius: 18px; box-sizing: border-box;
+    background: rgba(4,9,20,.85); border: 1px solid rgba(255,255,255,.12); box-shadow: 0 10px 40px rgba(0,0,0,.35); }
+  .testa { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 12px; }
+  .titolo { font-size: 26px; font-weight: 700; }
+  .numeri { font-size: 24px; font-variant-numeric: tabular-nums; color: rgba(255,255,255,.75); }
+  .numeri b { color: #fff; font-size: 30px; }
+  .pista { position: relative; height: 26px; border-radius: 13px; background: rgba(255,255,255,.1); overflow: hidden; }
+  .riemp { position: absolute; inset: 0 auto 0 0; width: 0; border-radius: 13px;
+    background: linear-gradient(90deg, #1d4ed8, #06b6d4, #10b981); box-shadow: 0 0 20px rgba(16,185,129,.6);
+    transition: width 2.5s cubic-bezier(.2,.8,.2,1); overflow: hidden; }
+  .riemp::after { content: ""; position: absolute; inset: 0;
+    background: linear-gradient(110deg, transparent 30%, rgba(255,255,255,.35) 50%, transparent 70%); background-size: 200% 100%;
+    animation: riflesso 2.5s linear infinite; }
+  .perc { position: absolute; right: 12px; top: 0; line-height: 26px; font-size: 16px; font-weight: 700; }
+  .fatto .titolo::after { content: " 🎉"; }
+  @keyframes riflesso { from { background-position: 200% 0; } to { background-position: -200% 0; } }
+</style>
+</head>
+<body>
+  <div class="box" id="box">
+    <div class="testa"><div class="titolo" id="titolo"></div><div class="numeri"><b id="val">0</b> / <span id="obj"></span></div></div>
+    <div class="pista"><div class="riemp" id="riemp"></div><div class="perc" id="perc"></div></div>
+  </div>
+<script>
+  const Q = new URLSearchParams(location.search);
+  const TITOLO = Q.get("titolo") || "Obiettivo iscritti";
+  const VALORE = +(Q.get("valore") || 742), OBIETTIVO = +(Q.get("obiettivo") || 1000), PRE = Q.get("prefisso") || "";
+  const n = (x) => PRE + Math.round(x).toLocaleString("it-IT");
+  document.getElementById("titolo").textContent = TITOLO;
+  document.getElementById("obj").textContent = n(OBIETTIVO);
+  const DURATA = +(Q.get("durata") ?? 2500);   // ms dell'animazione (0 = immediata)
+  const perc = Math.min(100, VALORE / OBIETTIVO * 100);
+  const riemp = document.getElementById("riemp");
+  riemp.style.transitionDuration = DURATA + "ms";
+  requestAnimationFrame(() => requestAnimationFrame(() => riemp.style.width = perc + "%"));
+  const elV = document.getElementById("val"), elP = document.getElementById("perc"), t0 = performance.now();
+  (function conta(t) {
+    const k = DURATA ? Math.min(1, (t - t0) / DURATA) : 1, e = 1 - Math.pow(1 - k, 3);
+    elV.textContent = n(VALORE * e); elP.textContent = Math.round(perc * e) + "%";
+    if (k < 1) requestAnimationFrame(conta); else if (VALORE >= OBIETTIVO) document.getElementById("box").classList.add("fatto");
+  })(t0);
+</script>
+</body>
+</html>

@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<title>Transizione strisce</title>
+<!--
+  Transizione: strisce verticali che scendono in sequenza a cascata e poi escono dal basso.
+  Schermo coperto a metà (punto di taglio ~650 ms). Stessi eventi di "pannelli-obliqui".
+  Test nel browser: clic sulla pagina.
+-->
+<style>
+  html, body { margin: 0; width: 100vw; height: 100vh; overflow: hidden; background: transparent; }
+  #scena { position: absolute; inset: 0; display: flex; }
+  .s { flex: 1; height: 100%; transform: translateY(-101%); margin-right: -1px; }
+  .attivo .s { animation: cade 1.3s cubic-bezier(.7,0,.3,1) forwards; animation-delay: calc(var(--i) * 45ms); }
+  @keyframes cade { 0% { transform: translateY(-101%); } 45%, 55% { transform: translateY(0); } 100% { transform: translateY(101%); } }
+  .anteprima .s { animation-play-state: paused !important; animation-delay: calc(-560ms + var(--i) * 45ms) !important; }
+</style>
+</head>
+<body>
+  <div id="scena"></div>
+<script>
+  const N = 10, COLORI = ["#1d4ed8", "#1e40af", "#0891b2", "#06b6d4", "#059669", "#10b981"];
+  const scena = document.getElementById("scena");
+  for (let i = 0; i < N; i++) {
+    const s = document.createElement("div"); s.className = "s";
+    s.style.setProperty("--i", i);
+    s.style.background = COLORI[Math.round(i / (N - 1) * (COLORI.length - 1))];
+    scena.appendChild(s);
+  }
+  const avvia = () => { scena.classList.remove("attivo"); void scena.offsetWidth; scena.classList.add("attivo"); };
+  const ferma = () => scena.classList.remove("attivo");
+  addEventListener("transitionStart", avvia);
+  addEventListener("transitionStop", ferma);
+  if (new URLSearchParams(location.search).get("anteprima")) { document.body.classList.add("anteprima"); scena.classList.add("attivo"); }
+  else if (!window.obsstudio) {
+    document.body.style.background = "#111";
+    addEventListener("click", () => { avvia(); setTimeout(ferma, 1800); });
+  }
+</script>
+</body>
+</html>

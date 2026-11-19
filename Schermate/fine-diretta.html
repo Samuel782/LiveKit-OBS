@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<title>Fine diretta</title>
+<!--
+  Schermata finale "Grazie per la visione".
+  Parametri URL (facoltativi):
+    titolo=Grazie%20per%20la%20visione
+    sottotitolo=Alla%20prossima%20diretta
+    social=YouTube:@canale,Instagram:@profilo,Twitch:canale
+-->
+<style>
+  :root { --blu: #1d4ed8; --verde: #10b981; --ciano: #06b6d4; --notte: #040914;
+          --font: "SF Pro Display", "Helvetica Neue", "Segoe UI", Arial, sans-serif; }
+  html, body { margin: 0; width: 100vw; height: 100vh; overflow: hidden; background: var(--notte);
+    font-family: var(--font); color: #fff; }
+  .blob { position: absolute; border-radius: 50%; mix-blend-mode: screen; animation: fluttua 20s infinite alternate ease-in-out; }
+  #b1 { width: 90vw; height: 90vw; top: -45%; left: 5%; background: radial-gradient(circle, rgba(29,78,216,.5), transparent 70%); }
+  #b2 { width: 70vw; height: 70vw; bottom: -35%; left: -15%; background: radial-gradient(circle, rgba(16,185,129,.4), transparent 70%); animation-duration: 25s; }
+  #b3 { width: 60vw; height: 60vw; bottom: -30%; right: -15%; background: radial-gradient(circle, rgba(6,182,212,.35), transparent 70%); animation-duration: 15s; animation-direction: alternate-reverse; }
+  @keyframes fluttua { 0% { transform: translate(-5%, 0) scale(.95); } 100% { transform: translate(5%, 5%) scale(1.1); } }
+
+  .centro { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
+  h1 { margin: 0; font-size: 7.5vw; font-weight: 800; letter-spacing: -.02em; line-height: 1.05;
+    background: linear-gradient(120deg, #ffffff 20%, #93c5fd 50%, #6ee7b7 80%); background-size: 200% 100%;
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+    animation: entra 1.2s cubic-bezier(.2,.8,.2,1) both, luccica 6s linear infinite; }
+  p { margin: 2.5vh 0 0; font-size: 2.4vw; color: rgba(255,255,255,.75); animation: entra 1.2s .2s cubic-bezier(.2,.8,.2,1) both; }
+  .social { display: flex; gap: 1.4vw; margin-top: 7vh; flex-wrap: wrap; justify-content: center; max-width: 85vw; }
+  .social div { display: flex; flex-direction: column; align-items: center; gap: .3em; padding: 1.1vw 2vw; border-radius: 1vw;
+    background: rgba(255,255,255,.07); border: 1px solid rgba(255,255,255,.14); backdrop-filter: blur(10px);
+    animation: entra 1s cubic-bezier(.2,.8,.2,1) both; }
+  .social b { font-size: 1.05vw; letter-spacing: .25em; text-transform: uppercase; color: #6ee7b7; font-weight: 600; }
+  .social span { font-size: 1.7vw; font-weight: 600; }
+  @keyframes entra { from { opacity: 0; transform: translateY(30px); } }
+  @keyframes luccica { to { background-position: -200% 0; } }
+</style>
+</head>
+<body>
+  <div class="blob" id="b1"></div><div class="blob" id="b2"></div><div class="blob" id="b3"></div>
+  <div class="centro">
+    <h1 id="titolo"></h1>
+    <p id="sotto"></p>
+    <div class="social" id="social"></div>
+  </div>
+<script>
+  /* ====== PERSONALIZZA QUI (o via URL) ====== */
+  const Q = new URLSearchParams(location.search);
+  const TITOLO = Q.get("titolo") || "Grazie per la visione";
+  const SOTTO = Q.get("sottotitolo") ?? "Alla prossima diretta 👋";
+  const SOCIAL = Q.get("social") ?? "YouTube:@iltuocanale,Instagram:@iltuoprofilo,Twitch:iltuocanale";
+  /* ========================================== */
+  document.getElementById("titolo").textContent = TITOLO;
+  document.getElementById("sotto").textContent = SOTTO;
+  const box = document.getElementById("social");
+  SOCIAL.split(",").filter(Boolean).forEach((s, i) => {
+    const [nome, handle] = s.split(":");
+    const d = document.createElement("div");
+    d.innerHTML = "<b></b><span></span>";
+    d.querySelector("b").textContent = nome;
+    d.querySelector("span").textContent = handle || "";
+    d.style.animationDelay = (0.4 + i * 0.12) + "s";
+    box.appendChild(d);
+  });
+</script>
+</body>
+</html>

@@ -6,5 +6,5 @@
 window.LT_CONFIG = {
   host: "localhost",
   port: 4455,
-  password: "kQUgdKaOS0FPwlON"
+  password: "INCOLLA_QUI_LA_PASSWORD"
 };

@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<title>Griglia in prospettiva</title>
+<style>
+  /* ====== PERSONALIZZA QUI (o via URL: ?velocita=6) ====== */
+  :root {
+    --linee: rgba(96, 165, 250, .55);     /* colore linee griglia */
+    --orizzonte: #10b981;                 /* colore dell'orizzonte */
+    --alone: rgba(16, 185, 129, .40);     /* bagliore dell'orizzonte */
+    --cielo: rgba(29, 78, 216, .28);      /* tinta del cielo */
+    --notte: #040914;                     /* sfondo */
+    --velocita: 6s;                       /* durata di un ciclo */
+  }
+  /* ======================================================== */
+  html, body { margin: 0; width: 100vw; height: 100vh; overflow: hidden; background: var(--notte); }
+
+  .cielo {
+    position: absolute; inset: 0;
+    background:
+      radial-gradient(ellipse 70% 40% at 50% 52%, var(--alone), transparent 70%),
+      radial-gradient(ellipse 60% 50% at 50% 50%, var(--cielo), transparent 75%);
+  }
+  .orizzonte {
+    position: absolute; left: 0; right: 0; top: 50%; height: 2px;
+    background: linear-gradient(90deg, transparent, var(--orizzonte), transparent);
+    box-shadow: 0 0 30px 6px var(--alone);
+  }
+  .piano {
+    position: absolute; left: -50%; width: 200%; top: 50%; height: 50%;
+    perspective: 300px; perspective-origin: 50% 0;
+    overflow: hidden;
+  }
+  .griglia {
+    position: absolute; left: 0; right: 0; top: 0; height: 300%;
+    background-image:
+      linear-gradient(to right, var(--linee) 2px, transparent 2px),
+      linear-gradient(to bottom, var(--linee) 2px, transparent 2px);
+    background-size: 90px 90px;
+    transform: rotateX(72deg);
+    transform-origin: 50% 0;
+    animation: avanza var(--velocita) linear infinite;
+  }
+  .piano::after { /* la griglia sfuma verso l'orizzonte */
+    content: ""; position: absolute; inset: 0;
+    background: linear-gradient(to bottom, var(--notte) 0%, rgba(4,9,20,.6) 18%, transparent 60%);
+  }
+  @keyframes avanza { to { background-position: 0 90px, 0 90px; } }
+</style>
+</head>
+<body>
+  <div class="cielo"></div>
+  <div class="piano"><div class="griglia"></div></div>
+  <div class="orizzonte"></div>
+<script>
+  const Q = new URLSearchParams(location.search);
+  if (Q.get("velocita")) document.documentElement.style.setProperty("--velocita", Q.get("velocita") + "s");
+</script>
+</body>
+</html>

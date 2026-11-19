@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<title>Transizione cerchio</title>
+<!--
+  Transizione: cerchi concentrici blu/ciano/verde che si espandono dal centro,
+  coprono lo schermo a metà (punto di taglio ~600 ms) e poi si ritirano.
+  Usala come la transizione "pannelli-obliqui" (stessi eventi).
+  Test nel browser: clic sulla pagina.
+-->
+<style>
+  :root { --durata: 1.2s; }
+  html, body { margin: 0; width: 100vw; height: 100vh; overflow: hidden; background: transparent; }
+  .cerchio { position: absolute; left: 50%; top: 50%; width: 10px; height: 10px; margin: -5px 0 0 -5px;
+    border-radius: 50%; transform: scale(0); }
+  .c1 { background: #10b981; } .c2 { background: #06b6d4; } .c3 { background: #1d4ed8; }
+  .logo { position: absolute; left: 50%; top: 50%; width: 14vh; height: 14vh; margin: -7vh 0 0 -7vh; border-radius: 50%;
+    border: .9vh solid rgba(255,255,255,.9); opacity: 0; transform: scale(.4); }
+  .attivo .c1 { animation: espandi var(--durata) cubic-bezier(.7,0,.3,1) forwards; }
+  .attivo .c2 { animation: espandi var(--durata) cubic-bezier(.7,0,.3,1) 60ms forwards; }
+  .attivo .c3 { animation: espandi var(--durata) cubic-bezier(.7,0,.3,1) 120ms forwards; }
+  .attivo .logo { animation: logo var(--durata) ease-in-out 120ms forwards; }
+  @keyframes espandi {
+    0%   { transform: scale(0); }
+    50%  { transform: scale(500); }
+    100% { transform: scale(500); opacity: 0; }
+  }
+  @keyframes logo { 0%, 30% { opacity: 0; transform: scale(.4); } 50% { opacity: 1; transform: scale(1); } 75%, 100% { opacity: 0; transform: scale(1.6); } }
+  .anteprima * { animation-play-state: paused !important; }
+  .anteprima .c1 { animation-delay: -.27s !important; }
+  .anteprima .c2 { animation-delay: -.23s !important; }
+  .anteprima .c3 { animation-delay: -.19s !important; }
+</style>
+</head>
+<body>
+  <div id="scena">
+    <div class="cerchio c1"></div><div class="cerchio c2"></div><div class="cerchio c3"></div>
+    <div class="logo"></div>
+  </div>
+<script>
+  const scena = document.getElementById("scena");
+  const avvia = () => { scena.classList.remove("attivo"); void scena.offsetWidth; scena.classList.add("attivo"); };
+  const ferma = () => scena.classList.remove("attivo");
+  addEventListener("transitionStart", avvia);
+  addEventListener("transitionStop", ferma);
+  if (new URLSearchParams(location.search).get("anteprima")) { document.body.classList.add("anteprima"); scena.classList.add("attivo"); }
+  else if (!window.obsstudio) {
+    document.body.style.background = "#111";
+    addEventListener("click", () => { avvia(); setTimeout(ferma, 1400); });
+  }
+</script>
+</body>
+</html>

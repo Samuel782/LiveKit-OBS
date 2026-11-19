@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<title>Pausa</title>
+<!--
+  Schermata di pausa "Torniamo subito".
+  Parametri URL (facoltativi):
+    titolo=Torniamo%20subito
+    sottotitolo=Prendi%20un%20caffè%20☕
+    minuti=3      mostra anche un piccolo conto alla rovescia
+-->
+<style>
+  :root { --blu: #1d4ed8; --verde: #10b981; --ciano: #06b6d4; --notte: #040914;
+          --font: "SF Pro Display", "Helvetica Neue", "Segoe UI", Arial, sans-serif; }
+  html, body { margin: 0; width: 100vw; height: 100vh; overflow: hidden; background: var(--notte);
+    font-family: var(--font); color: #fff; }
+
+  .blob { position: absolute; border-radius: 50%; mix-blend-mode: screen; animation: fluttua 18s infinite alternate ease-in-out; }
+  #b1 { width: 75vw; height: 75vw; top: -25%; right: -20%; background: radial-gradient(circle, rgba(16,185,129,.45), transparent 70%); }
+  #b2 { width: 85vw; height: 85vw; bottom: -40%; left: -25%; background: radial-gradient(circle, rgba(29,78,216,.55), transparent 70%); animation-duration: 23s; animation-direction: alternate-reverse; }
+  @keyframes fluttua { 0% { transform: translate(-5%, 5%) scale(.95); } 100% { transform: translate(6%, -6%) scale(1.1); } }
+
+  .anelli { position: absolute; left: 50%; top: 50%; }
+  .anelli span { position: absolute; left: 0; top: 0; width: 30vw; height: 30vw; margin: -15vw 0 0 -15vw; border-radius: 50%;
+    border: 2px solid rgba(255,255,255,.12); animation: onda 6s ease-out infinite; }
+  .anelli span:nth-child(2) { animation-delay: 2s; }
+  .anelli span:nth-child(3) { animation-delay: 4s; }
+  @keyframes onda { 0% { transform: scale(.5); opacity: 0; } 20% { opacity: 1; } 100% { transform: scale(2.6); opacity: 0; } }
+
+  .centro { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
+  .pausa-icona { display: flex; gap: 1.4vw; margin-bottom: 4vh; }
+  .pausa-icona i { width: 1.6vw; height: 6vw; border-radius: .4vw; background: linear-gradient(var(--ciano), var(--verde));
+    box-shadow: 0 0 30px rgba(16,185,129,.6); animation: respira 2s ease-in-out infinite; }
+  .pausa-icona i:nth-child(2) { animation-delay: .3s; }
+  @keyframes respira { 50% { transform: scaleY(.75); opacity: .7; } }
+  h1 { margin: 0; font-size: 7vw; font-weight: 800; letter-spacing: -.02em; }
+  .puntini::after { content: ""; animation: puntini 1.5s steps(4) infinite; display: inline-block; width: 1.2em; text-align: left; }
+  @keyframes puntini { 0% { content: ""; } 25% { content: "."; } 50% { content: ".."; } 75% { content: "..."; } }
+  p { margin: 2vh 0 0; font-size: 2.2vw; color: rgba(255,255,255,.7); font-weight: 400; }
+  p:empty { display: none; }
+  .timer { margin-top: 4vh; font-size: 2.4vw; font-weight: 600; font-variant-numeric: tabular-nums; letter-spacing: .1em;
+    padding: .4em 1.1em; border-radius: 999px; background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.15); }
+  .timer:empty { display: none; }
+</style>
+</head>
+<body>
+  <div class="blob" id="b1"></div><div class="blob" id="b2"></div>
+  <div class="anelli"><span></span><span></span><span></span></div>
+  <div class="centro">
+    <div class="pausa-icona"><i></i><i></i></div>
+    <h1><span id="titolo">Torniamo subito</span><span class="puntini"></span></h1>
+    <p id="sotto"></p>
+    <div class="timer" id="timer"></div>
+  </div>
+<script>
+  /* ====== PERSONALIZZA QUI (o via URL) ====== */
+  const Q = new URLSearchParams(location.search);
+  document.getElementById("titolo").textContent = Q.get("titolo") || "Torniamo subito";
+  document.getElementById("sotto").textContent = Q.get("sottotitolo") ?? "La diretta riprende tra pochissimo";
+  const MINUTI = parseFloat(Q.get("minuti") || 0);
+  /* ========================================== */
+  if (MINUTI > 0) {
+    const fine = Date.now() + MINUTI * 60000, el = document.getElementById("timer");
+    const due = (n) => String(n).padStart(2, "0");
+    (function tick() {
+      const s = Math.max(0, Math.ceil((fine - Date.now()) / 1000));
+      el.textContent = s ? `${due(Math.floor(s / 60))}:${due(s % 60)}` : "Si riparte!";
+      if (s) setTimeout(tick, 250);
+    })();
+  }
+</script>
+</body>
+</html>

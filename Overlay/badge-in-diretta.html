@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<title>Badge In diretta</title>
+<!--
+  Badge "IN DIRETTA" con punto pulsante e durata della diretta.
+  Consigliato: Fonte Browser 600x150.
+  Parametri URL: testo=IN%20DIRETTA  tempo=0 (nasconde la durata)  inizio=20:30 (conta da quell'ora)
+-->
+<style>
+  html, body { margin: 0; background: transparent; overflow: hidden;
+    font-family: "SF Pro Display", "Helvetica Neue", "Segoe UI", Arial, sans-serif; }
+  body { display: flex; align-items: center; height: 100vh; padding-left: 20px; }
+  .badge { display: inline-flex; align-items: stretch; border-radius: 14px; overflow: hidden; font-size: 34px;
+    box-shadow: 0 8px 30px rgba(0,0,0,.35); animation: entra .8s cubic-bezier(.2,.8,.2,1) both; }
+  .live { display: flex; align-items: center; gap: 14px; padding: 14px 24px; background: #dc2626; color: #fff;
+    font-weight: 800; letter-spacing: .12em; }
+  .punto { width: 16px; height: 16px; border-radius: 50%; background: #fff; position: relative; }
+  .punto::after { content: ""; position: absolute; inset: 0; border-radius: 50%; background: #fff; animation: pulsa 1.6s ease-out infinite; }
+  .tempo { display: flex; align-items: center; padding: 14px 24px; background: rgba(4,9,20,.85); color: #fff;
+    font-weight: 600; font-variant-numeric: tabular-nums; letter-spacing: .05em; }
+  .tempo:empty { display: none; }
+  @keyframes pulsa { from { transform: scale(1); opacity: .8; } to { transform: scale(3); opacity: 0; } }
+  @keyframes entra { from { transform: translateX(-40px); opacity: 0; } }
+</style>
+</head>
+<body>
+  <div class="badge">
+    <div class="live"><span class="punto"></span><span id="testo">IN DIRETTA</span></div>
+    <div class="tempo" id="tempo"></div>
+  </div>
+<script>
+  const Q = new URLSearchParams(location.search);
+  document.getElementById("testo").textContent = Q.get("testo") || "IN DIRETTA";
+  if (Q.get("tempo") !== "0") {
+    let start = Date.now();
+    if (Q.get("inizio")) {
+      const [h, m] = Q.get("inizio").split(":").map(Number), d = new Date();
+      d.setHours(h, m || 0, 0, 0); if (d > new Date()) d.setDate(d.getDate() - 1);
+      start = d.getTime();
+    }
+    const el = document.getElementById("tempo"), due = (n) => String(n).padStart(2, "0");
+    (function tick() {
+      const s = Math.floor((Date.now() - start) / 1000);
+      el.textContent = `${due(Math.floor(s / 3600))}:${due(Math.floor(s % 3600 / 60))}:${due(s % 60)}`;
+      setTimeout(tick, 1000 - (Date.now() - start) % 1000);
+    })();
+  }
+</script>
+</body>
+</html>
