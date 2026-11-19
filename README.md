@@ -1,4 +1,4 @@
-# ObsTools 🎬
+# LiveKit-OBS 🎬
 
 Sfondi animati, schermate, overlay e transizioni per dirette con **OBS Studio**.
 Sono tutti file **HTML autonomi**: non servono plugin né programmi esterni.
